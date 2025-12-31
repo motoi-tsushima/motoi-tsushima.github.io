@@ -1,10 +1,10 @@
 main:
   - title: "Menu"
-    url: /menu/
+    url: /_menu/
   - title: "About"
     url: /about/
   - title: "Posts"
-    url: /posts/
+    url: /_posts/
   - title: "Categories"
     url: /categories/
   - title: "Tags"
