@@ -11,13 +11,16 @@ plugins:
   - jekyll-paginate
   - jekyll-sitemap
 
+locale: "ja-JP"
+
 # Minimal Mistakes の設定
 minimal_mistakes_skin: "default"  # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # サイト設定
 author:
   name: "snow-stack"
-  bio: ".NET開発者の技術ブログ"
+  avatar: "/assets/images/snow-stack_mini.jpg"
+  bio: "「雪の山」技術ブログ"
   location: "Sapporo, Japan"
   links:
     - label: "GitHub"
