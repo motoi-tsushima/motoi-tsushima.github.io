@@ -1,7 +1,38 @@
 title: Snow Stack 
-description: 雪の山
-theme: minima
+description: 技術ブログ
+# theme: minima  ← コメントアウト
 
-minima:
-  skin: dark  # または solarized, solarized-dark
-  
+# Minimal Mistakes を指定
+remote_theme: mmistakes/minimal-mistakes@4.24.0
+
+plugins:
+  - jekyll-feed
+  - jekyll-include-cache
+  - jekyll-paginate
+  - jekyll-sitemap
+
+# Minimal Mistakes の設定
+minimal_mistakes_skin: "default"  # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+
+# サイト設定
+author:
+  name: "snow-stack"
+  bio: ".NET開発者の技術ブログ"
+  location: "Sapporo, Japan"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/motoi-tsushima"
+
+# デフォルト設定
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: false
+      share: true
+      related: true
