@@ -1,4 +1,6 @@
 main:
+  - title: "Menu"
+    url: /menu/
   - title: "About"
     url: /about/
   - title: "Posts"
