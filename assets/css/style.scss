@@ -1,0 +1,36 @@
+---
+---
+
+@import "minima";
+
+/* カスタムスタイル */
+body {
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  background-color: #f8f9fa;
+}
+
+.site-header {
+  background-color: #1e3a8a;
+  border: none;
+}
+
+.site-title {
+  color: white !important;
+  font-weight: bold;
+}
+
+.page-link {
+  color: white !important;
+}
+
+.post-title {
+  color: #1e3a8a;
+}
+
+a {
+  color: #2563eb;
+}
+
+a:hover {
+  color: #1e40af;
+}

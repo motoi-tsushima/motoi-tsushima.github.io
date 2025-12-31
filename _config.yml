@@ -1,3 +1,7 @@
 title: Snow Stack 
 description: 雪の山
-theme: jekyll-theme-architect
+theme: minima
+
+minima:
+  skin: dark  # または solarized, solarized-dark
+  
