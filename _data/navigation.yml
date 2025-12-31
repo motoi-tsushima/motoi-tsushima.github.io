@@ -1,6 +1,6 @@
 main:
   - title: "Menu"
-    url: /_menu/
+    url: /_menu/new-article.md
   - title: "About"
     url: /about/
   - title: "Posts"
