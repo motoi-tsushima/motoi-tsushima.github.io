@@ -4,7 +4,7 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
-/* カスタムスタイル - 青・白・シアン系の見出しデザイン（背景やや濃いめ版） */
+/* カスタムスタイル - 青・白・シアン系の見出しデザイン（調整版） */
 
 /* H1 見出し - やや濃いめの青背景 */
 h1 {
@@ -19,12 +19,13 @@ h1 {
   border-left: 6px solid #3b82f6;
 }
 
-/* H2 見出し - やや濃いめの青背景 */
+/* H2 見出し - 濃いめの青背景 + 下線追加 */
 h2 {
-  background-color: #dbeafe;
+  background-color: #93c5fd;
   color: #1e40af;
   padding: 15px 20px;
   border-left: 6px solid #60a5fa;
+  border-bottom: 3px solid #3b82f6;
   margin-top: 35px;
   margin-bottom: 20px;
   font-weight: bold;
@@ -43,10 +44,10 @@ h3 {
   border-radius: 3px;
 }
 
-/* H4 見出し - やや濃いめのシアン背景 */
+/* H4 見出し - 文字色を濃く、背景を薄く */
 h4 {
-  color: #0284c7;
-  background-color: #cffafe;
+  color: #0c4a6e;
+  background-color: #ecfeff;
   padding: 10px 15px;
   padding-bottom: 10px;
   border-bottom: 3px solid #67e8f9;
@@ -56,15 +57,15 @@ h4 {
   border-radius: 3px;
 }
 
-/* H5 見出し - やや濃いめのシアン背景 */
+/* H5 見出し - 背景を薄く、文字を太く */
 h5 {
   color: #0369a1;
   border-left: 4px solid #67e8f9;
   padding-left: 12px;
   margin-top: 20px;
   margin-bottom: 12px;
-  font-weight: 600;
-  background-color: #cffafe;
+  font-weight: bold;
+  background-color: #f0fdfa;
   padding-top: 8px;
   padding-bottom: 8px;
 }
@@ -104,3 +105,4 @@ code {
   border-radius: 3px;
   border: 1px solid #bfdbfe;
 }
+
