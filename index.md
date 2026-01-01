@@ -4,7 +4,7 @@ author_profile: true
 title: "メインタイトル"
 excerpt: "説明文(テストテストテストテストテストテストテストテストテストテスト)"
 header:
-  image: /assets/images/test.jpg
+  image: /assets/images/header.jpg
 ---
 
 index.md
