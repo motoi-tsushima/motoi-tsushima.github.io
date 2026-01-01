@@ -4,11 +4,11 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
-/* カスタムスタイル - 青・白・シアン系の見出しデザイン（明るく改良版） */
+/* カスタムスタイル - 青・白・シアン系の見出しデザイン（背景やや濃いめ版） */
 
-/* H1 見出し - 薄い青背景 + 濃い青文字 */
+/* H1 見出し - やや濃いめの青背景 */
 h1 {
-  background: linear-gradient(135deg, #f0f9ff 0%, #f0fdfa 100%);
+  background: linear-gradient(135deg, #bfdbfe 0%, #bae6fd 100%);
   color: #1e40af;
   padding: 20px 25px;
   border-radius: 8px;
@@ -19,22 +19,21 @@ h1 {
   border-left: 6px solid #3b82f6;
 }
 
-/* H2 見出し - 薄い青背景 + 左アクセント */
+/* H2 見出し - やや濃いめの青背景 */
 h2 {
-  background-color: #f0f9ff;
+  background-color: #dbeafe;
   color: #1e40af;
   padding: 15px 20px;
   border-left: 6px solid #60a5fa;
-  border-bottom: 3px solid #67e8f9;
   margin-top: 35px;
   margin-bottom: 20px;
   font-weight: bold;
   border-radius: 4px;
 }
 
-/* H3 見出し - 薄いシアン背景 */
+/* H3 見出し - やや濃いめのシアン背景 */
 h3 {
-  background: linear-gradient(to right, #f0fdfa 0%, #f0f9ff 100%);
+  background: linear-gradient(to right, #cffafe 0%, #dbeafe 100%);
   color: #0c4a6e;
   padding: 12px 18px;
   border-left: 5px solid #22d3ee;
@@ -44,10 +43,10 @@ h3 {
   border-radius: 3px;
 }
 
-/* H4 見出し - 薄い背景 + シアン下線 */
+/* H4 見出し - やや濃いめのシアン背景 */
 h4 {
   color: #0284c7;
-  background-color: #f0fdfa;
+  background-color: #cffafe;
   padding: 10px 15px;
   padding-bottom: 10px;
   border-bottom: 3px solid #67e8f9;
@@ -57,7 +56,7 @@ h4 {
   border-radius: 3px;
 }
 
-/* H5 見出し - 薄いシアン背景 + 左ボーダー */
+/* H5 見出し - やや濃いめのシアン背景 */
 h5 {
   color: #0369a1;
   border-left: 4px solid #67e8f9;
@@ -65,12 +64,12 @@ h5 {
   margin-top: 20px;
   margin-bottom: 12px;
   font-weight: 600;
-  background-color: #f0fdfa;
+  background-color: #cffafe;
   padding-top: 8px;
   padding-bottom: 8px;
 }
 
-/* H6 見出し - 控えめなスタイル */
+/* H6 見出し - やや濃いめの背景 */
 h6 {
   color: #0891b2;
   border-left: 3px solid #a5f3fc;
@@ -79,7 +78,7 @@ h6 {
   margin-bottom: 10px;
   font-weight: 500;
   font-style: italic;
-  background-color: #fefefe;
+  background-color: #f0fdfa;
   padding-top: 6px;
   padding-bottom: 6px;
 }
@@ -99,10 +98,10 @@ h6 {
 
 /* コードブロックも青系に調整 */
 code {
-  background-color: #f0f9ff;
+  background-color: #dbeafe;
   color: #1e40af;
   padding: 2px 6px;
   border-radius: 3px;
-  border: 1px solid #dbeafe;
+  border: 1px solid #bfdbfe;
 }
 
