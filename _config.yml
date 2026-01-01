@@ -33,9 +33,9 @@ defaults:
       path: ""
       type: posts
     values:
-      layout: home
+      layout: splash
       author_profile: false
       read_time: true
       comments: false
       share: false
-      related: false
+      related: true
