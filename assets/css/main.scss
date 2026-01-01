@@ -1,0 +1,45 @@
+---
+---
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+@import "minimal-mistakes";
+
+/* カスタムスタイル - 見出しのカスタマイズ */
+
+/* H2 見出し */
+h2 {
+  background-color: #2c3e50;
+  color: #ffffff;
+  padding: 10px 15px;
+  border-left: 5px solid #3498db;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/* H3 見出し */
+h3 {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  padding: 8px 12px;
+  border-left: 4px solid #3498db;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+/* H4 見出し */
+h4 {
+  color: #2980b9;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* H5 見出し */
+h5 {
+  color: #7f8c8d;
+  border-left: 3px solid #95a5a6;
+  padding-left: 10px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
