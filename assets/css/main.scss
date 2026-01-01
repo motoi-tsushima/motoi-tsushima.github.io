@@ -8,8 +8,8 @@
 
 /* H1 見出し - グラデーション終わりを薄色に */
 h1 {
-  background: linear-gradient(135deg, #93c5fd 0%, #dbeafe 100%);
-  color: #1e3a8a;
+  background: linear-gradient(135deg, #bfdbfe 0%, #eff6ff 100%);
+  color: #1e40af;
   padding: 20px 25px;
   border-radius: 8px;
   margin-top: 40px;
@@ -17,8 +17,9 @@ h1 {
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
   border-left: 8px solid #3b82f6;
-  border-top: 4px solid #3b82f6;
-  border-bottom: 4px solid #60a5fa;
+  border-right: 8px solid #60a5fa;
+  border-top: 2px solid #93c5fd;
+  border-bottom: 2px solid #93c5fd;
 }
 
 /* H2 見出し - グラデーション背景 + 終わりを薄色に */
