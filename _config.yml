@@ -20,7 +20,7 @@ minimal_mistakes_skin: "default"  # "air", "aqua", "contrast", "dark", "dirt", "
 author:
   name: "snow-stack"
   avatar: "/assets/images/snow-stack_mini.jpg"
-  bio: "「雪の山」技術ブログ"
+  bio: "「雪塚」技術ブログ"
   location: "Sapporo, Japan"
   links:
     - label: "GitHub"
