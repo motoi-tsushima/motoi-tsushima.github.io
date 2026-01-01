@@ -2,6 +2,9 @@
 layout: home
 author_profile: true
 title: "メインタイトル"
+excerpt: "説明文(テストテストテストテストテストテストテストテストテストテスト)"
+header:
+  image: /assets/images/test.jpg
 ---
 
 index.md
