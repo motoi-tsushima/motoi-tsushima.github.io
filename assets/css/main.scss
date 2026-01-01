@@ -4,81 +4,81 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
-/* カスタムスタイル - 青・白・シアン系の見出しデザイン（背景しっかり濃いめ版） */
+/* カスタムスタイル - 青・白・シアン系の見出しデザイン（背景やや濃いめ版） */
 
-/* H1 見出し - しっかり濃い青背景 */
+/* H1 見出し - やや濃いめの青背景 */
 h1 {
-  background: linear-gradient(135deg, #93c5fd 0%, #7dd3fc 100%);
-  color: #1e3a8a;
+  background: linear-gradient(135deg, #bfdbfe 0%, #bae6fd 100%);
+  color: #1e40af;
   padding: 20px 25px;
   border-radius: 8px;
   margin-top: 40px;
   margin-bottom: 25px;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
-  border-left: 6px solid #1e40af;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+  border-left: 6px solid #3b82f6;
 }
 
-/* H2 見出し - しっかり濃い青背景 */
+/* H2 見出し - やや濃いめの青背景 */
 h2 {
-  background-color: #93c5fd;
-  color: #1e3a8a;
+  background-color: #dbeafe;
+  color: #1e40af;
   padding: 15px 20px;
-  border-left: 6px solid #2563eb;
+  border-left: 6px solid #60a5fa;
   margin-top: 35px;
   margin-bottom: 20px;
   font-weight: bold;
   border-radius: 4px;
 }
 
-/* H3 見出し - しっかり濃いシアン背景 */
+/* H3 見出し - やや濃いめのシアン背景 */
 h3 {
-  background: linear-gradient(to right, #67e8f9 0%, #93c5fd 100%);
+  background: linear-gradient(to right, #cffafe 0%, #dbeafe 100%);
   color: #0c4a6e;
   padding: 12px 18px;
-  border-left: 5px solid #0891b2;
+  border-left: 5px solid #22d3ee;
   margin-top: 30px;
   margin-bottom: 18px;
   font-weight: 600;
   border-radius: 3px;
 }
 
-/* H4 見出し - しっかり濃いシアン背景 */
+/* H4 見出し - やや濃いめのシアン背景 */
 h4 {
-  color: #0c4a6e;
-  background-color: #67e8f9;
+  color: #0284c7;
+  background-color: #cffafe;
   padding: 10px 15px;
   padding-bottom: 10px;
-  border-bottom: 3px solid #22d3ee;
+  border-bottom: 3px solid #67e8f9;
   margin-top: 25px;
   margin-bottom: 15px;
   font-weight: 600;
   border-radius: 3px;
 }
 
-/* H5 見出し - しっかり濃いシアン背景 */
+/* H5 見出し - やや濃いめのシアン背景 */
 h5 {
-  color: #0c4a6e;
-  border-left: 4px solid #0891b2;
+  color: #0369a1;
+  border-left: 4px solid #67e8f9;
   padding-left: 12px;
   margin-top: 20px;
   margin-bottom: 12px;
   font-weight: 600;
-  background-color: #a5f3fc;
+  background-color: #cffafe;
   padding-top: 8px;
   padding-bottom: 8px;
 }
 
-/* H6 見出し - 薄めの背景 */
+/* H6 見出し - やや濃いめの背景 */
 h6 {
-  color: #0369a1;
-  border-left: 3px solid #22d3ee;
+  color: #0891b2;
+  border-left: 3px solid #a5f3fc;
   padding-left: 10px;
   margin-top: 18px;
   margin-bottom: 10px;
   font-weight: 500;
   font-style: italic;
-  background-color: #cffafe;
+  background-color: #f0fdfa;
   padding-top: 6px;
   padding-bottom: 6px;
 }
@@ -98,9 +98,9 @@ h6 {
 
 /* コードブロックも青系に調整 */
 code {
-  background-color: #93c5fd;
-  color: #1e3a8a;
+  background-color: #dbeafe;
+  color: #1e40af;
   padding: 2px 6px;
   border-radius: 3px;
-  border: 1px solid #60a5fa;
+  border: 1px solid #bfdbfe;
 }
