@@ -4,61 +4,99 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
-/* カスタムスタイル - 見出しのカスタマイズ */
+/* カスタムスタイル - 青・白・シアン系の見出しデザイン */
 
-/* H1 見出し */
+/* H1 見出し - 濃い青のグラデーション背景 */
 h1 {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #3498db;
-  padding: 12px 20px;
-  border-radius: 5px;
-  margin-top: 30px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff;
+  padding: 20px 25px;
+  border-radius: 8px;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  border-left: 6px solid #06b6d4;
 }
 
-/* H2 見出し */
+/* H2 見出し - 青の左アクセント + 薄い背景 */
 h2 {
-  background-color: #3498db;
-  color: #2c3e50;
+  background-color: #eff6ff;
+  color: #1e40af;
   padding: 15px 20px;
-  border-left: 5px solid #3498db;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  margin-top: 30px;
+  border-left: 6px solid #3b82f6;
+  margin-top: 35px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  border-radius: 4px;
 }
 
-/* H3 見出し */
+/* H3 見出し - シアンアクセント + グラデーション背景 */
 h3 {
-  background-color: #3498db;
-  color: #2c3e50;
-  padding: 8px 12px;
-  border-left: 4px solid #3498db;
+  background: linear-gradient(to right, #ecfeff 0%, #f0f9ff 100%);
+  color: #0c4a6e;
+  padding: 12px 18px;
+  border-left: 5px solid #06b6d4;
+  margin-top: 30px;
+  margin-bottom: 18px;
+  font-weight: 600;
+  border-radius: 3px;
+}
+
+/* H4 見出し - 下線スタイル */
+h4 {
+  color: #0284c7;
+  border-bottom: 3px solid #7dd3fc;
+  padding-bottom: 8px;
+  padding-left: 8px;
   margin-top: 25px;
   margin-bottom: 15px;
+  font-weight: 600;
+  background: linear-gradient(to bottom, transparent 50%, #f0f9ff 50%);
 }
 
-/* H4 見出し */
-h4 {
-  background-color: #3498db;
-  color: #2980b9;
-  border-bottom: 2px solid #2c3e50;
-  padding-bottom: 5px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-
-/* H5 見出し */
+/* H5 見出し - シンプルな左ボーダー */
 h5 {
-  color: #2c3e50;
-  border-left: 3px solid #2c3e50;
-  padding-left: 10px;
-  margin-top: 15px;
-  margin-bottom: 10px;
+  color: #0369a1;
+  border-left: 4px solid #22d3ee;
+  padding-left: 12px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  background-color: #f0fdfa;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
-/* H6 見出し */
+/* H6 見出し - 控えめなスタイル */
 h6 {
-  color: #7f8c8d;
-  border-left: 3px solid #2c3e50;
+  color: #0891b2;
+  border-left: 3px solid #a5f3fc;
   padding-left: 10px;
-  margin-top: 15px;
+  margin-top: 18px;
   margin-bottom: 10px;
+  font-weight: 500;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* 記事本文のリンク色も青系に統一 */
+.page__content a {
+  color: #2563eb;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom 0.3s;
+}
+
+.page__content a:hover {
+  color: #1e40af;
+  border-bottom: 1px solid #3b82f6;
+}
+
+/* コードブロックも青系に調整 */
+code {
+  background-color: #f0f9ff;
+  color: #1e40af;
+  padding: 2px 6px;
+  border-radius: 3px;
 }
