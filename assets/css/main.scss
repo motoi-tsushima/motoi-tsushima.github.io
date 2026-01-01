@@ -6,9 +6,9 @@
 
 /* カスタムスタイル - 青・白・シアン系の見出しデザイン（調整版） */
 
-/* H1 見出し - やや濃いめの青背景 */
+/* H1 見出し - グラデーション終わりを薄色に */
 h1 {
-  background: linear-gradient(135deg, #bfdbfe 0%, #bae6fd 100%);
+  background: linear-gradient(135deg, #bfdbfe 0%, #eff6ff 100%);
   color: #1e40af;
   padding: 20px 25px;
   border-radius: 8px;
@@ -19,9 +19,9 @@ h1 {
   border-left: 6px solid #3b82f6;
 }
 
-/* H2 見出し - 濃いめの青背景 + 下線追加 */
+/* H2 見出し - グラデーション背景 + 終わりを薄色に */
 h2 {
-  background-color: #93c5fd;
+  background: linear-gradient(135deg, #93c5fd 0%, #dbeafe 100%);
   color: #1e40af;
   padding: 15px 20px;
   border-left: 6px solid #60a5fa;
