@@ -4,61 +4,62 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
-/* カスタムスタイル - 青・白・シアン系の見出しデザイン */
+/* カスタムスタイル - 青・白・シアン系の見出しデザイン（明るく改良版） */
 
-/* H1 見出し - 濃い青のグラデーション背景 */
+/* H1 見出し - 薄い青背景 + 濃い青文字 */
 h1 {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  color: #1e40af;
   padding: 20px 25px;
   border-radius: 8px;
   margin-top: 40px;
   margin-bottom: 25px;
   font-weight: bold;
-  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-  border-left: 6px solid #06b6d4;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+  border-left: 6px solid #3b82f6;
 }
 
-/* H2 見出し - 青の左アクセント + 薄い背景 */
+/* H2 見出し - 薄い青背景 + 左アクセント */
 h2 {
-  background-color: #eff6ff;
+  background-color: #f0f9ff;
   color: #1e40af;
   padding: 15px 20px;
-  border-left: 6px solid #3b82f6;
+  border-left: 6px solid #60a5fa;
   margin-top: 35px;
   margin-bottom: 20px;
   font-weight: bold;
   border-radius: 4px;
 }
 
-/* H3 見出し - シアンアクセント + グラデーション背景 */
+/* H3 見出し - 薄いシアン背景 */
 h3 {
-  background: linear-gradient(to right, #ecfeff 0%, #f0f9ff 100%);
+  background: linear-gradient(to right, #f0fdfa 0%, #f0f9ff 100%);
   color: #0c4a6e;
   padding: 12px 18px;
-  border-left: 5px solid #06b6d4;
+  border-left: 5px solid #22d3ee;
   margin-top: 30px;
   margin-bottom: 18px;
   font-weight: 600;
   border-radius: 3px;
 }
 
-/* H4 見出し - 下線スタイル */
+/* H4 見出し - 薄い背景 + シアン下線 */
 h4 {
   color: #0284c7;
-  border-bottom: 3px solid #7dd3fc;
-  padding-bottom: 8px;
-  padding-left: 8px;
+  background-color: #f0fdfa;
+  padding: 10px 15px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #67e8f9;
   margin-top: 25px;
   margin-bottom: 15px;
   font-weight: 600;
-  background: linear-gradient(to bottom, transparent 50%, #f0f9ff 50%);
+  border-radius: 3px;
 }
 
-/* H5 見出し - シンプルな左ボーダー */
+/* H5 見出し - 薄いシアン背景 + 左ボーダー */
 h5 {
   color: #0369a1;
-  border-left: 4px solid #22d3ee;
+  border-left: 4px solid #67e8f9;
   padding-left: 12px;
   margin-top: 20px;
   margin-bottom: 12px;
@@ -77,7 +78,9 @@ h6 {
   margin-bottom: 10px;
   font-weight: 500;
   font-style: italic;
-  opacity: 0.9;
+  background-color: #fefefe;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 /* 記事本文のリンク色も青系に統一 */
@@ -99,4 +102,6 @@ code {
   color: #1e40af;
   padding: 2px 6px;
   border-radius: 3px;
+  border: 1px solid #dbeafe;
 }
+
