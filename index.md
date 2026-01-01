@@ -1,9 +1,8 @@
 ---
 layout: home
 author_profile: true
+title: "メインタイトル"
 ---
-
-# メインタイトル
 
 index.md
 
