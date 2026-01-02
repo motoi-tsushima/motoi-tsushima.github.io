@@ -33,7 +33,9 @@ defaults:
       path: ""
       type: posts
     values:
-      layout: splash
+      layout: single 
+      classes: wide
+      show_date: true 
       author_profile: false
       read_time: true
       comments: false
