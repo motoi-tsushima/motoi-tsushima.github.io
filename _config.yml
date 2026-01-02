@@ -12,6 +12,7 @@ plugins:
   - jekyll-sitemap
 
 locale: "ja-JP"
+date_format: "%Y年%m月%d日"
 
 # Minimal Mistakes の設定
 minimal_mistakes_skin: "default"  # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
@@ -38,7 +39,6 @@ defaults:
       show_date: true 
       author_profile: false
       read_time: true
-      date_format: "%Y年%m月%d日"
       comments: false
       share: false
       related: true
