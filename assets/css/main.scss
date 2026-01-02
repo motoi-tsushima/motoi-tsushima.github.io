@@ -4,6 +4,12 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
+// ヘッダー画像の高さを制限
+.page__hero-image {
+  max-height: 300px;  // お好みの高さに調整
+  object-fit: cover;  // 画像をトリミングして収める
+}
+
 /* カスタムスタイル - 青・白・シアン系の見出しデザイン（調整版） */
 
 /* H1 見出し - グラデーション終わりを薄色に */
