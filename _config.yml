@@ -20,6 +20,8 @@ minimal_mistakes_skin: "default"  # "air", "aqua", "contrast", "dark", "dirt", "
 include:
   - _pages
   
+search: true
+
 # サイト設定
 author:
   name: "snow-stack"
