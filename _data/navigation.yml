@@ -1,6 +1,6 @@
 main:
   - title: "Menu"
-    url: /menu/menu
+    url: /menu/
   - title: "Categories"
     url: /categories/
   - title: "Tags"
