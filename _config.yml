@@ -22,6 +22,12 @@ include:
   
 search: true
 
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "G-2V4V3TG2KD"
+    anonymize_ip: false  # IP匿名化（GDPR対応が必要な場合は true）
+
 # サイト設定
 author:
   name: "snow-stack"
