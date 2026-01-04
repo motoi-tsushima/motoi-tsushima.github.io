@@ -17,6 +17,9 @@ date_format: "%Y年%m月%d日"
 # Minimal Mistakes の設定
 minimal_mistakes_skin: "default"  # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
+include:
+  - _pages
+  
 # サイト設定
 author:
   name: "snow-stack"
