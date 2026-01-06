@@ -5,6 +5,6 @@ permalink: /menu/
 author_profile: true
 ---
 
-ここにメニューページの内容を書く
+準備中
 
 [About](/about/)
