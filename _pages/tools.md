@@ -19,7 +19,7 @@ txprobe は、複数のファイルの文字エンコーディング・BOM・改
 
 使用方法は、それぞれ /h オプションで表示されます。
 
-download [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.1.2](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.1.2)
+download [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.1.3](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.1.3)
 
 repository [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-tsushima/rmsmf)
 
