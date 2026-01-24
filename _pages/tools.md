@@ -14,15 +14,15 @@ txprobe は、複数のファイルの文字エンコーディング・BOM・改
 
 インストール方法:
 
-以下の download から rmsmf.x64.zip をダウンロードして解凍し、展開された .exe ファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
-単純な EXE ファイルだけで成り立つツールなので、インストーラーは用意していません。
+以下の download から rmsmf.zip をダウンロードして解凍し、展開された 全てのファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
+単純な 実行ファイルだけで成り立つツールなので、インストーラーは用意していません。
 
 使用方法は、それぞれ /h オプションで表示されます。
 
-download [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.1.3](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.1.3)
+download [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.3.0](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.3.0)
 
 repository [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-tsushima/rmsmf)
 
 
-※ rmsmf は以前から公開していましたが、今回 rmsmf の機能強化とリファクタリングをして、確認ツールの txprobe を追加して、正式版としてリリースし直しました。
+※ rmsmf は以前から公開していましたが、今回 rmsmf の機能強化とリファクタリングをして、確認ツールの txprobe を追加して、正式版として再リリースしました。
 
