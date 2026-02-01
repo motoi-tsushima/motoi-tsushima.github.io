@@ -36,7 +36,7 @@ rmsmf の移植版が mfsr 、txprobe の移植版が mfprobe です。
 
 配布している実行ファイルは、Native AOT で発行した物で、OS のネイティブコードなので、実行に .NET の RunTime は必要無いです。
 
-download [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.1](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.1)
+download [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.3](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.3)
 
 repository [https://github.com/motoi-tsushima/mfsr](https://github.com/motoi-tsushima/mfsr)
 
