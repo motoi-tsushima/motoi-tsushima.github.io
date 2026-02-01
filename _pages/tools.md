@@ -26,3 +26,17 @@ repository [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-ts
 
 ※ rmsmf は以前から公開していましたが、今回 rmsmf の機能強化とリファクタリングをして、確認ツールの txprobe を追加して、正式版として再リリースしました。
 
+### mfsr and mfprobe
+
+.NET Framework 4.8 版の rmsmf と txprobe を、.NET 10 へ移植したモノです。
+
+rmsmf の移植版が mfsr 、txprobe の移植版が mfprobe です。
+
+コマンドの仕様や使い方は、変わっていません。
+
+配布している実行ファイルは、Native AOT で発行した物で、OS のネイティブコードなので、実行に .NET の RunTime は必要無いです。
+
+download [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.1](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.1)
+
+repository [https://github.com/motoi-tsushima/mfsr](https://github.com/motoi-tsushima/mfsr)
+
