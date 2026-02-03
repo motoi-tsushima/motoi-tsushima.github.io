@@ -40,3 +40,9 @@ download [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.3](https://
 
 repository [https://github.com/motoi-tsushima/mfsr](https://github.com/motoi-tsushima/mfsr)
 
+### rmsmf txprobe mfsr mfprobe 使い方ガイド
+
+rmsmf txprobe mfsr mfprobe 、四つのコマンドの使い方を、以下の記事で説明しています。
+
+[rmsmf-txprobe & mfsr-mfprobe 使い方の分かりやすい解説](/tool_rmsmf_guide/)
+
