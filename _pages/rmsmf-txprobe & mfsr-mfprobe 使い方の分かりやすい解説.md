@@ -416,3 +416,37 @@ mfsr /r:replacelist.csv /rc:shift_jis *.txt
 
 以上で、rmsmf txprobe, mfsr mfprobe の解説を終わります。
 
+
+## 名前の根拠
+最後に、コマンド名とオプション名の由来を記載しておきたいと思います。
+
+| コマンド名 | 名前の根拠                                 |
+| ---------- | ------------------------------------------ |
+| rmsmf      | Replace Multiple Strings in Multiple Files |
+| txprobe    | Text file Probe                            |
+| mfsr       | Multi-File String Replacer                 |
+| mfprobe    | Multi-File Probe                           |
+
+| 通常オプション | 名前の根拠                 |
+| -------------- | -------------------------- |
+| /d             | sub Directory              |
+| /b             | BOM (Byte Order Mark)      |
+| /nl            | New Line                   |
+| /r             | Replace                    |
+| /s             | Search                     |
+| /c             | Character encoding         |
+| /w             | Written character encoding |
+| /f             | File list                  |
+| /p             | Probe                      |
+
+| 特殊文字エンコーディング指定 | 名前の根拠                                                |
+| ---------------------------- | --------------------------------------------------------- |
+| /rc                          | Character encoding of Replacement word list. 前後逆です。 |
+| /sc                          | Character encoding of Search word list.  前後逆です。     |
+| /fc                          | File list character encoding.                             |
+
+| 環境設定 | 名前の根拠      |
+| -------- | --------------- |
+| /det     | Detector option |
+| /ci      | Culture Info    |
+
