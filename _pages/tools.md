@@ -14,14 +14,14 @@ txprobe は、複数のファイルの文字エンコーディング・BOM・改
 
 インストール方法:
 
-以下の download から rmsmf.zip をダウンロードして解凍し、展開された 全てのファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
+以下の Download から rmsmf.zip をダウンロードして解凍し、展開された 全てのファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
 単純な 実行ファイルだけで成り立つツールなので、インストーラーは用意していません。
 
 使用方法は、それぞれ /h オプションで表示されます。
 
-download [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.0Fix](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.0Fix)
+**Download** [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.0Fix](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.0Fix)
 
-repository [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-tsushima/rmsmf)
+**Repository** [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-tsushima/rmsmf)
 
 
 ※ rmsmf は以前から公開していましたが、今回 rmsmf の機能強化とリファクタリングをして、確認ツールの txprobe を追加して、正式版として再リリースしました。
@@ -36,9 +36,14 @@ rmsmf の移植版が mfsr 、txprobe の移植版が mfprobe です。
 
 配布している実行ファイルは、Native AOT で発行した物で、OS のネイティブコードなので、実行に .NET の RunTime は必要無いです。
 
-download [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.3](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.3)
+インストール方法:
 
-repository [https://github.com/motoi-tsushima/mfsr](https://github.com/motoi-tsushima/mfsr)
+以下の Download から mfsr.win.zip をダウンロードして解凍し、展開された .exe ファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
+単純な 実行ファイルだけで成り立つツールなので、インストーラーは用意していません。
+
+**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.4](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.4)
+
+**Repository** [https://github.com/motoi-tsushima/mfsr](https://github.com/motoi-tsushima/mfsr)
 
 ### rmsmf txprobe mfsr mfprobe 使い方ガイド
 
