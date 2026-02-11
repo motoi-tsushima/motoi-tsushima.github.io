@@ -414,6 +414,16 @@ rmsmf-mfsr では、/rc:オプションにより、置換単語リストCSVの�
 mfsr /r:replacelist.csv /rc:shift_jis *.txt
 ```
 
+## 注意事項
+
+rmsmf-mfsr , txprobe-mfprobe は、どれも PowerShell のオブジェクトパイプラインには対応しておりません。
+cmd でも使用できるように開発しているので、PowerShell固有のオブジェクトパイプラインに合わせていないのです。
+よって、Export-Csv や Export-Clixml で検索結果を CSV や XML に落とすことはできません。
+
+結果をファイル出力したいときは、txprobe-mfprobe の /o:オプションを使用してください。
+
+
+
 以上で、rmsmf txprobe, mfsr mfprobe の解説を終わります。
 
 
