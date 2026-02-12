@@ -19,7 +19,7 @@ txprobe は、複数のファイルの文字エンコーディング・BOM・改
 
 使用方法は、それぞれ /h オプションで表示されます。
 
-**Download** [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.1](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.1)
+**Download** [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.2](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.2)
 
 **Repository** [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-tsushima/rmsmf)
 
@@ -41,7 +41,7 @@ rmsmf の移植版が mfsr 、txprobe の移植版が mfprobe です。
 以下の Download から mfsr.win.zip をダウンロードして解凍し、展開された .exe ファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
 単純な 実行ファイルだけで成り立つツールなので、インストーラーは用意していません。
 
-**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.4](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.4)
+**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.5](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.5)
 
 **Repository** [https://github.com/motoi-tsushima/mfsr](https://github.com/motoi-tsushima/mfsr)
 
