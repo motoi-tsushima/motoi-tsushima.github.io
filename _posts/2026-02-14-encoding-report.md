@@ -6,6 +6,7 @@ tags:
   - Character Encoding
   - Shift_JIS
   - UTF-8
+  - UTF-16
   - BOM
 ---
 
