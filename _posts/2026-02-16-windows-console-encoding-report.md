@@ -183,6 +183,7 @@ cmd.exe はシングルバイトおよびダブルバイト系のエンコーデ
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
 "日本語です" > test_utf-8.txt
+"日本語です" | Set-Content test_utf-8_set.txt
 ```
 
 PowerShell では `[Console]::OutputEncoding`、`[Console]::InputEncoding`、`$OutputEncoding` の3つの変数でエンコーディングを設定します。出力は `>`（`Out-File` 相当）と `Set-Content` の2種類で検証しました。
