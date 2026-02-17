@@ -151,6 +151,12 @@ ISO-2022-JP が正常に処理されるのは、`Get-Content` がバイト列を
 各コンソールでエンコーディングを指定し、日本語テキストをファイルに出力した結果です。
 
 ### cmd.exe
+検証コマンドの例:
+
+```
+chcp 65001
+echo "日本語です" > echo_utf-8.txt
+```
 
 cmd.exe では `chcp` コマンドでコードページを切り替えます。
 
@@ -169,6 +175,16 @@ cmd.exe はシングルバイトおよびダブルバイト系のエンコーデ
 
 ### Windows PowerShell 5.1
 
+検証コマンドの例:
+
+```
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+"日本語です" > test_utf-8.txt
+```
+
 PowerShell では `[Console]::OutputEncoding`、`[Console]::InputEncoding`、`$OutputEncoding` の3つの変数でエンコーディングを設定します。出力は `>`（`Out-File` 相当）と `Set-Content` の2種類で検証しました。
 
 | エンコーディング | `>` | `Set-Content` | 備考 |
@@ -185,6 +201,8 @@ PowerShell では `[Console]::OutputEncoding`、`[Console]::InputEncoding`、`$O
 注目すべき点として、エンコーディングを設定しても `>` の出力は常に **UTF-16LE（BOM付き）** 、`Set-Content` の出力は常に **Shift_JIS** になります。コンソールのエンコーディング設定はファイル出力のエンコーディングには影響しません。ファイルの出力エンコーディングを変更するには、`Out-File -Encoding` や `Set-Content -Encoding` のようにコマンドレットの `-Encoding` パラメータを使用する必要があります。
 
 ### PowerShell 7.5.4
+
+検証コマンドは Windows PowerShell 5.1 と同様です。
 
 | エンコーディング | `>` | `Set-Content` | 備考 |
 |:---:|:---:|:---:|:---|
