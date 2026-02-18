@@ -63,7 +63,7 @@ tags:
 ### コマンドプロンプト（cmd）
 
 ```cmd
-echo 日本語です > text.txt
+echo "日本語です" > text.txt
 ```
 
 - **デフォルト:** Shift_JIS
