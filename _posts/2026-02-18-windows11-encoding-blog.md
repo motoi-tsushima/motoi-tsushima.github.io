@@ -227,7 +227,7 @@ Visual Studio の検証結果を見れば分かるように、Windows環境の C
 
 Excel CSV や VBA なども Shift_JIS をデフォルトとしながら「BOM付きUTF-8」が基本になっています。
 
-一方、メモ帳 と VS Code と PowerShell 7.x は、「BOM無しUTF-8」が基本になっており、PowerShell 7.x に至っては「BOM付きUTF-8」テキストを作成する手段が存在しません。
+一方、メモ帳 と VS Code と PowerShell 7.x は、「BOM無しUTF-8」が基本になっており、PowerShell 7.x では単純なリダイレクトなどでは「BOM付きUTF-8」が作成できません。`-Encoding utf8BOM` 指定が必要です。
 
 Windows PowerShell 5.1 もOSの深部との結びつきが強く、まだ現役で標準装備されています。
 Windows PowerShell 5.1 は、「BOM付きUTF-16LE」テキストが標準の上に、コマンドレットによって「Shift_JIS」テキストと混在しており、日本語文字エンコーディングが統一されていません。
