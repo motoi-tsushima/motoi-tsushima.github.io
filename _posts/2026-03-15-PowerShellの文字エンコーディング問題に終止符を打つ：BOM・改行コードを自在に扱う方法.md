@@ -319,7 +319,7 @@ mfprobe text1.txt
 mfprobe *.txt
 ```
 
-BOMの追加
+#### BOMの追加
 
 BOMの更新には、`/b:` オプションを使用します。  
 `/b:true` で「BOMを追加する」、`/b:false` で「BOMを削除する」と動作更新します。  
@@ -333,7 +333,7 @@ mfsr text1.txt /b:true
 mfsr *.txt /b:true
 ```
 
-BOMの削除
+#### BOMの削除
 
 BOMの削除も「BOMの追加」の説明の通りに使用します。
 
@@ -363,7 +363,7 @@ mfprobe text1.txt
 mfprobe *.txt /d
 ```
 
-改行コードの変換
+#### 改行コードの変換
 
 改行コードの変換更新には、`/nl:` オプションを使用します。  
 `/nl:crlf` で「Windows型改行コード」、`/nl:lf` で「UNIX型改行コード」に変換し更新します。  
