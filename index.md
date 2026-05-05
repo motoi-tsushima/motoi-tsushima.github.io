@@ -1,6 +1,7 @@
 ---
 layout: home
 author_profile: true
+classes: wide
 title: "雪塚"
 excerpt: ".NET を中心に技術系記事を書いています。"
 header:
