@@ -1,6 +1,7 @@
 ---
 title: "rmsmf-txprobe & mfsr-mfprobe 使い方の分かりやすい解説"
 layout: single
+classes: wide
 permalink: /tool_rmsmf_guide/
 author_profile: true
 ---

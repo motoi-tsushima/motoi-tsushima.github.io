@@ -1,6 +1,7 @@
 ---
 title: ".NET 10 の画面有りアーキテクチャの解説とサンプルコード"
 layout: single
+classes: wide
 permalink: /dotnet10-GUI-architecture-list/
 author_profile: true
 ---
