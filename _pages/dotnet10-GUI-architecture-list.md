@@ -707,6 +707,8 @@ Avaloniaのコアフレームワーク自体はMITライセンスで永久に無
 
 組織向けには別途 Organization Plus / Pro / Enterprise が用意されています。
 
+参考資料 → [Avalonia UI のライセンス規定を解説します](/avaloniaui-license-guide/)
+
 OSSプロジェクトでありながら、有償ティアによる収益で資金源が確立されており、既に十年以上提供されている実績があるため、将来にわたって安定的に開発が継続されることが期待できます。
 
 ### Avalonia UI : Client-Server with Web API
