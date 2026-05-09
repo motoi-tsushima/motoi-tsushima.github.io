@@ -135,9 +135,11 @@ dotnet tool uninstall -g mfsr
 
 ただ、既に winget と dotnet tool （NuGet.org）による自動インストールを提供しているので、従来の手動インストールはお勧めしません。
 
-以下の Download から mfsr.win.zip をダウンロードして解凍し、展開された .exe ファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
+以下の Download から mfsr と mfprobe の圧縮ファイルをダウンロードして解凍し、展開された 実行ファイルを 環境変数 Path の通ったフォルダーにコピーすれば、コンソールアプリとして使用できます。
 
-**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.6](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.2.6)
+実行ファイルは Windows,macOS,Linux 用にそれぞれ有りますので、該当OS用の圧縮ファイルをダウンロードしてください。
+
+**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.5.0](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.5.0)
 
 リポジトリは以下の GitHub リポジトリで公開しています。
 
@@ -151,9 +153,12 @@ git clone https://github.com/motoi-tsushima/mfsr
 
 ## 補足
 
-現在、インストール方法によって、コマンドのバージョンが違いますが、どれもコマンドの機能や不具合対応の内容に違いはありません。
+~~現在、インストール方法によって、コマンドのバージョンが違いますが、どれもコマンドの機能や不具合対応の内容に違いはありません。~~
 
-リリースの都合で、バージョン番号がバラバラになっているだけです。
+~~リリースの都合で、バージョン番号がバラバラになっているだけです。~~
 
-そのうち、バージョン番号を揃えます。
+~~そのうち、バージョン番号を揃えます。~~
 
+v1.0.5.0 をリリースしました。バージョン番号は揃えました。
+
+(winget のバージョン番号が反映されるまで少し時間がかかる場合があります)

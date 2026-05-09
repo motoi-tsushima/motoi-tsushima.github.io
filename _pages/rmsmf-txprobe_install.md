@@ -12,8 +12,7 @@ author_profile: true
 
 使用方法は、それぞれ /h オプションで表示されます。
 
-**Download** [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.4](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.4.4)
+**Download** [https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.5.0](https://github.com/motoi-tsushima/rmsmf/releases/tag/v1.0.5.0)
 
 **Repository** [https://github.com/motoi-tsushima/rmsmf](https://github.com/motoi-tsushima/rmsmf)
-
 
