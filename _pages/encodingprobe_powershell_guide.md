@@ -1,6 +1,7 @@
 ---
 title: "SnowStack.EncodingProbe.PowerShell 解説"
 layout: single
+classes: wide
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
 ---

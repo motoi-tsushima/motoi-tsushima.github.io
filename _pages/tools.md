@@ -1,6 +1,7 @@
 ---
 title: "Tools"
 layout: single
+classes: wide
 permalink: /tools/
 author_profile: true
 ---
