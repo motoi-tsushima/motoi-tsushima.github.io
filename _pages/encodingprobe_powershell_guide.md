@@ -1,10 +1,9 @@
-```
+---
 title: "SnowStack.EncodingProbe.PowerShell 解説"
 layout: single
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
-```
-
+---
 SnowStack.EncodingProbe.PowerShell  のインストール方法と、使い方を解説します。
 
 ## インストール方法
