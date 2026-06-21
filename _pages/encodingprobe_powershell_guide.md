@@ -11,7 +11,7 @@ SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を
 
 SnowStack.EncodingProbe.PowerShell は、PowerShell ギャラリーに登録して配布しているので、PowerShell標準の Install-PSResource コマンドでギャラリーからダウンロード・インストールできます。（ユーザーが PowerShell ギャラリーを直接開く必要は無いです）
 
-https://www.powershellgallery.com/
+[powershellgallery.com](https://www.powershellgallery.com/)
 
 [PowerShell ギャラリーの概要](https://learn.microsoft.com/ja-jp/powershell/gallery/getting-started?view=powershellget-3.x)
 
