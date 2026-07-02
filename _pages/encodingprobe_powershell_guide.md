@@ -208,7 +208,7 @@ EUC-TW と CP950(Big5) の両方に該当する場合は、CP950(Big5) と判定
 
 EUC-CN と CP936(GBK) の両方に該当する場合は、CP936(GBK) と判定します。
 
-ちなみに、日本語の EUC-JP と Shift_JIS の両方に該当する場合は、改行コードがWindows型ならば Shift_JIS と UNIX型ならば EUC-JP と判定します。改行コードが無い場合は OS が Windowsの場合は Shift_JIS と Linux|Mac の場合は EUC-JP と判定します。
+ちなみに、日本語の EUC-JP と Shift_JIS の両方に該当する場合は、改行コードがWindows型ならば Shift_JIS と UNIX型ならば EUC-JP と判定します。改行コードが無い場合は OS が Windowsの場合は Shift_JIS と Linux又はMac の場合は EUC-JP と判定します。
 
-バイト並び解析の詳細方針は、正式リリースのときに説明します。
+文字エンコーディングの解析方針の詳細は、正式リリースのときに説明します。
 
