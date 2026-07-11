@@ -70,18 +70,20 @@ Resolve-Encoding filename.txt
 
 Resolve-Encoding は PowerShell スクリプトの中で使用できることを優先して開発したので、複数ファイルを一括で推測したい場合は、既に提供している mfprobe をご利用ください。
 
+[rmsmf-txprobe & mfsr-mfprobe 使い方の分かりやすい解説](/tool_rmsmf_guide/)
+
 #### Resolve-Encoding の出力値
 
 Resolve-Encoding の出力するプロパティ変数は以下の種類があります。
 
-| プロパティ名   | 値の内容                                                     |
-| -------------- | ------------------------------------------------------------ |
-| CodePage       | 文字エンコーディングのコードページ                           |
-| EncodingName   | .NET C# の中で使用する文字エンコーディング名称               |
-| PSEncodingName | PowerShell コマンドレットの -Encoding オプション等に指定する文字エンコーディングのフレンド名 |
-| Bom            | BOMの有無。True = BOM有り、False = BOM無し。                 |
-| LineBreak      | 改行コードの種類。Windows形式 = CrLf 、UNIX形式 = Lf         |
-| Culture        | コマンドが認識したカルチャー情報 (国情報)                    |
+| プロパティ名    | 値の内容                                                     |
+| --------------- | ------------------------------------------------------------ |
+| CodePage        | 文字エンコーディングのコードページ                           |
+| EncodingWebName | .NET C# の中で使用する文字エンコーディング名称               |
+| PSEncodingName  | PowerShell コマンドレットの -Encoding オプション等に指定する文字エンコーディングのフレンドリ名 |
+| Bom             | BOMの有無。True = BOM有り、False = BOM無し。                 |
+| LineBreak       | 改行コードの種類。Windows形式 = CrLf 、UNIX形式 = Lf         |
+| Culture         | コマンドが認識したカルチャー情報 (国情報)                    |
 
 #### Resolve-Encoding のオプション
 
@@ -230,4 +232,20 @@ PowerShell 5.1 への対応には、大がかりな工夫が必要で、1.0.0.0 
 ご了承ください。
 
 まだ、テスト中ですが、Preview5 版 Resolve-Encoding の仕様は、ほぼ確定になると思います。不具合改修による修正は有り得ますので、ご注意ください。
+
+### 2026年7月11日　追記
+
+両、Preview6 版をリリースしました。
+
+これで、ほぼプレリリース最終版と考えています。
+
+Windows PowerShell 5.1 の文字エンコーディングのフレンドリ名は、BOM無しUnicode（UTF-8,UTF-16LEなど）に対応していません。
+
+よって、Resolve-Encoding が PSEncodingName で返すフレンドリ名は、PowerShell5.1とPowerShell6.2以降とで、異なる値を返す仕様に変更しました。
+
+基本的に PowerShell 5.1 では BOM無しUnicode は扱わない仕様なので、その場合は PSEncodingName に空白を返します。
+
+また、BOM有りUTF-8のようにどちらでも扱える文字エンコーディングにおいても、 PowerShell 5.1 と  PowerShell 6.2以降とでは、標準フレンドリ名が異なります。それぞれのPowerShellのバージョンに合わせたフレンドリ名を返すように改修しました。
+
+次のリリースで正式版をリリースできれば良いな、と思っています。
 
