@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_guide/
 author_profile: true
 ---
-2026/06/23 document update
+2026/07/14 document update
 
 ## EncodingProbe とは
 
@@ -31,13 +31,8 @@ SnowStack.EncodingProbe が クラスライブラリで、SnowStack.EncodingProb
 
 ## リリース状況
 
-2026年6月6日に最初の preview1 をリリースし、何度かテスト・デバッグ・リリースを進めて、
-
-2026年7月11日 preview6 をリリースしました。
-
-現在はまだ正式リリースは行っておらず、プレリリース段階です。
-
-まだプレリリース段階なので、NuGetパッケージの外部仕様は変更する可能性があります。プレリリースの現状ではNuGetパッケージを使用した開発はお勧めできません。正式版のリリースまでお待ちください。
+2026年6月6日に最初の preview1 をリリースし、何度か改修版のプレリリースを行った後、
+2026年7月14日に正式版の Version 1.0.0 をリリースしました。
 
 ## NuGetパッケージのインストール方法
 
@@ -61,7 +56,9 @@ dotnet package add SnowStack.EncodingProbe
 
 注意点として .NET 10 SDK 以降では dotnet package add、.NET 9 SDK 以前では dotnet add package を使用します。[dotnet package add](https://learn.microsoft.com/ja-jp/dotnet/core/tools/dotnet-package-add)
 
-※ Visual Studio から NuGet パッケージを検索する場合は、「プレリリースを含む」チェックボックスをオンにして検索インストールしてください。
+~~※ Visual Studio から NuGet パッケージを検索する場合は、「プレリリースを含む」チェックボックスをオンにして検索インストールしてください。~~
+
+※ 正式版 1.0.0 の検索には「プレリリースを含む」チェックボックスをオンにする必要はありません。
 
 ## EncodingProbe NuGetパッケージの使い方
 
@@ -264,13 +261,11 @@ text1.txt EncodingInformation { CodePage = 1200, EncodingWebName = utf-16, PSEnc
 
 ## お知らせ欄
 
-繰り返しになりますが、現在 EncodingProbe NuGet パッケージはプレリリース版であり、まだ正式版のリリースは行っておりません。
+繰り返しになりますが EncodingProbe NuGet パッケージの正式版をリリースしました。
 
-正式版リリースまでに外部仕様も変更する可能性があります。
+Version 1.0.0 のリリース日は、2026年7月14日になります。
 
-よって、現状ではテスト利用目的以外で、EncodingProbe NuGet パッケージを利用することはお勧めできません。
+ドキュメント類の整理は、これから行います。必要最小限度の説明は、この記事で行っています。
 
-正式版リリースのときは、ここでアナウンスします。
-
-しばらくお待ちください。
+詳細ドキュメント類は、しばらくお待ちください。
 
