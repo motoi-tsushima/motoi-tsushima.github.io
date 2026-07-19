@@ -12,21 +12,21 @@ header:
     - label: "GitHub"
       url: "https://github.com/motoi-tsushima"
 feature_row:
-  - image_path: /assets/images/tools-placeholder.svg
+  - image_path: /assets/images/encodingprobe.svg
     alt: "EncodingProbe"
     title: "EncodingProbe"
     excerpt: "文字エンコーディングを推測する .NET クラスライブラリと PowerShell コマンドレット。"
     url: "/encodingprobe_guide/"
     btn_label: "詳しく見る"
     btn_class: "btn--primary"
-  - image_path: /assets/images/tools-placeholder.svg
+  - image_path: /assets/images/mfsr.svg
     alt: "mfsr"
     title: "mfsr"
     excerpt: ".NET 10 / Native AOT 版の文字列一括置換コマンド。文字コード・改行コード・BOM を変換します。"
     url: "/mfsr_install_guide/"
     btn_label: "詳しく見る"
     btn_class: "btn--primary"
-  - image_path: /assets/images/tools-placeholder.svg
+  - image_path: /assets/images/mfprobe.svg
     alt: "mfprobe"
     title: "mfprobe"
     excerpt: ".NET 10 / Native AOT 版の文字エンコーディング・BOM・改行コード確認コマンド。"

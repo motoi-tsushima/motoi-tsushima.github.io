@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" role="img" aria-label="mfprobe command line tool icon">
+  <rect x="0" y="0" width="400" height="280" fill="#E9F1FB"/>
+  <rect x="138" y="84" width="150" height="116" rx="12" fill="#FFFFFF" stroke="#17508A" stroke-width="7"/>
+  <line x1="141" y1="112" x2="285" y2="112" stroke="#17508A" stroke-width="5"/>
+  <circle cx="158" cy="98" r="4.5" fill="#4E86C4"/>
+  <circle cx="176" cy="98" r="4.5" fill="#4E86C4"/>
+  <circle cx="194" cy="98" r="4.5" fill="#4E86C4"/>
+  <polyline points="160,132 178,146 160,160" fill="none" stroke="#17508A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="192" y1="160" x2="230" y2="160" stroke="#4E86C4" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="252" cy="178" r="27" fill="#FFFFFF" stroke="#17508A" stroke-width="7"/>
+  <line x1="271" y1="197" x2="294" y2="220" stroke="#17508A" stroke-width="9" stroke-linecap="round"/>
+  <rect x="22" y="22" width="70" height="30" rx="15" fill="#185FA5"/>
+  <text x="57" y="43" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="600" fill="#FFFFFF">CLI</text>
+</svg>

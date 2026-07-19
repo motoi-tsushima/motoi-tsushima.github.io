@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" role="img" aria-label="mfsr command line tool icon">
+  <rect x="0" y="0" width="400" height="280" fill="#E9F1FB"/>
+  <rect x="155" y="88" width="96" height="124" rx="10" fill="#D3E3F5" stroke="#17508A" stroke-width="7"/>
+  <rect x="180" y="72" width="96" height="124" rx="10" fill="#FFFFFF" stroke="#17508A" stroke-width="7"/>
+  <line x1="200" y1="102" x2="256" y2="102" stroke="#4E86C4" stroke-width="7" stroke-linecap="round"/>
+  <line x1="200" y1="124" x2="248" y2="124" stroke="#4E86C4" stroke-width="7" stroke-linecap="round"/>
+  <line x1="200" y1="158" x2="258" y2="158" stroke="#17508A" stroke-width="7" stroke-linecap="round"/>
+  <polyline points="248,150 258,158 248,166" fill="none" stroke="#17508A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="258" y1="178" x2="200" y2="178" stroke="#17508A" stroke-width="7" stroke-linecap="round"/>
+  <polyline points="210,170 200,178 210,186" fill="none" stroke="#17508A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="22" y="22" width="70" height="30" rx="15" fill="#185FA5"/>
+  <text x="57" y="43" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="600" fill="#FFFFFF">CLI</text>
+</svg>

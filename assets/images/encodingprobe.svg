@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" role="img" aria-label="EncodingProbe library icon">
+  <rect x="0" y="0" width="400" height="280" fill="#E9F1FB"/>
+  <rect x="150" y="78" width="112" height="140" rx="12" fill="#FFFFFF" stroke="#17508A" stroke-width="7"/>
+  <line x1="172" y1="112" x2="230" y2="112" stroke="#4E86C4" stroke-width="7" stroke-linecap="round"/>
+  <line x1="172" y1="138" x2="242" y2="138" stroke="#4E86C4" stroke-width="7" stroke-linecap="round"/>
+  <line x1="172" y1="164" x2="212" y2="164" stroke="#4E86C4" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="238" cy="186" r="32" fill="#FFFFFF" stroke="#17508A" stroke-width="7"/>
+  <line x1="261" y1="209" x2="287" y2="235" stroke="#17508A" stroke-width="9" stroke-linecap="round"/>
+  <rect x="22" y="22" width="70" height="30" rx="15" fill="#185FA5"/>
+  <text x="57" y="43" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="600" fill="#FFFFFF">LIB</text>
+</svg>
