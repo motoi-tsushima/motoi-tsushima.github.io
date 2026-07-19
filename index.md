@@ -3,9 +3,8 @@ layout: splash
 title: "雪塚 (snow-stack)"
 excerpt: ".NET / PowerShell 向けの文字エンコーディング関連 OSS ツール・ライブラリと、技術解説記事を公開しています。"
 header:
-  overlay_color: "#000"
-  overlay_filter: "0.5"
-  overlay_image: /assets/images/header.jpg
+  overlay_image: /assets/images/hero-snow.svg
+  overlay_filter: "0.2"
   actions:
     - label: "Tools を見る"
       url: "/tools/"
