@@ -139,7 +139,7 @@ dotnet tool uninstall -g mfsr
 
 実行ファイルは Windows,macOS,Linux 用にそれぞれ有りますので、該当OS用の圧縮ファイルをダウンロードしてください。
 
-**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.5.0](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.0.5.0)
+**Download** [https://github.com/motoi-tsushima/mfsr/releases/tag/v1.1.0.0](https://github.com/motoi-tsushima/mfsr/releases/tag/v1.1.0.0)
 
 リポジトリは以下の GitHub リポジトリで公開しています。
 
@@ -153,12 +153,5 @@ git clone https://github.com/motoi-tsushima/mfsr
 
 ## 補足
 
-~~現在、インストール方法によって、コマンドのバージョンが違いますが、どれもコマンドの機能や不具合対応の内容に違いはありません。~~
+2026年8月2日、v1.1.0.0 をリリースしました。
 
-~~リリースの都合で、バージョン番号がバラバラになっているだけです。~~
-
-~~そのうち、バージョン番号を揃えます。~~
-
-v1.0.5.0 をリリースしました。バージョン番号は揃えました。
-
-(winget のバージョン番号が反映されるまで少し時間がかかる場合があります)
