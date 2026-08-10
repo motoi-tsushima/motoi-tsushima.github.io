@@ -321,8 +321,10 @@ https://snow-stack.net/encodingprobe_guide/
 
 UTF.Unknown
 Copyright (c) 2018 Nikolay Pultsin
-Licensed under MIT License
+Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
+(This software uses UTF.Unknown under the terms of MPL 1.1)
 https://github.com/CharsetDetector/UTF-unknown
+https://www.mozilla.org/MPL/1.1/
 ```
 
 ## お知らせ関連

@@ -83,7 +83,9 @@ EncodingProbe の文字エンコーディングの解析結果は、EncodingInfo
 
 #### UTF.Unknown について
 
-EncodingProbe は、独自実装の EncodingDetector と、サードパーティ製品の UTF.Unknown （MITライセンス）を言語に応じて使い分けることで、文字エンコーディングの解析を行っています。
+EncodingProbe は、独自実装の EncodingDetector と、サードパーティ製品の UTF.Unknown （MPL 1.1）を言語に応じて使い分けることで、文字エンコーディングの解析を行っています。
+
+UTF.Unknown は Mozilla Universal Charset Detector の系譜にあるライブラリで、Mozilla Public License 1.1 / GPL 2 以降 / LGPL 2.1 以降 のいずれかを利用者が選択できる三重ライセンスとなっています。SnowStack.EncodingProbe では MPL 1.1 を選択し、NuGet パッケージを未改変のまま参照しています。MPL 1.1 はファイル単位の弱いコピーレフトであり、未改変のライブラリを別アセンブリとして参照する形であれば呼び出し側に義務は波及しないため、SnowStack.EncodingProbe 自体は MIT ライセンスで提供しています。
 
 後述する EncodingDetectorOptions をデフォルトモードで使用する場合、最初に EncodingDetector による解析が行われ、解析結果が不明になった場合は、UTF.Unknown により文字エンコーディングの解析を行います。
 
@@ -283,8 +285,10 @@ https://snow-stack.net/encodingprobe_guide/
 
 UTF.Unknown
 Copyright (c) 2018 Nikolay Pultsin
-Licensed under MIT License
+Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
+(This software uses UTF.Unknown under the terms of MPL 1.1)
 https://github.com/CharsetDetector/UTF-unknown
+https://www.mozilla.org/MPL/1.1/
 ```
 
 
