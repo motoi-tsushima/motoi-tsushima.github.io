@@ -1,5 +1,7 @@
 ---
 title: ".NET の歴史 ─ Framework から Core、そして統一へ"
+layout: single
+author_profile: true
 permalink: /dotnet-history/
 toc: true
 toc_label: "目次"

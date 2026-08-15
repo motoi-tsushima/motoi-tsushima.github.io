@@ -1,5 +1,7 @@
 ---
 title: "Windows PowerShell 5.1 と PowerShell 6.2 以降の違い"
+layout: single
+author_profile: true
 permalink: /windows-powershell-51-vs-pwsh-62/
 toc: true
 toc_label: "目次"

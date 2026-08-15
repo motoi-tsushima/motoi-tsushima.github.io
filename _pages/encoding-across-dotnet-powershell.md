@@ -1,5 +1,7 @@
 ---
 title: "EncodingProbe から見た .NET / PowerShell の文字コード環境差"
+layout: single
+author_profile: true
 permalink: /encoding-across-dotnet-powershell/
 excerpt: ".NET Framework と .NET、Windows PowerShell 5.1 と PowerShell 7 ── 4本の記事を「文字コード」の一点で束ね直し、SnowStack.EncodingProbe が解く問題へつなげます。"
 toc: true

@@ -1,5 +1,7 @@
 ---
 title: "PowerShell の歴史 ─ cmd から Windows PowerShell、そして PowerShell 7 へ"
+layout: single
+author_profile: true
 permalink: /powershell-history/
 toc: true
 toc_label: "目次"

@@ -5,13 +5,15 @@ classes: wide
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
 ---
-2026/07/14 document update
+2026/08/15 document update
 
 SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を解説します。
 
 ## インストール方法
 
 SnowStack.EncodingProbe.PowerShell は、PowerShell ギャラリーに登録して配布しているので、PowerShell標準の Install-PSResource コマンドでギャラリーからダウンロード・インストールできます。（ユーザーが PowerShell ギャラリーを直接開く必要は無いです）
+
+以下の手順は PowerShell 7.x を対象としています。Windows PowerShell 5.1 には Install-PSResource コマンドが用意されていないため、この手順のままではインストールできません。Windows PowerShell 5.1 をお使いの方は、後述の「Windows PowerShell 5.1 へのインストール」をご覧ください。
 
 [powershellgallery.com](https://www.powershellgallery.com/)
 
@@ -41,6 +43,18 @@ Set-PSResourceRepository cmdlet. Are you sure you want to install the PSResource
 
 
 [Y] か [A] を入力して [Enter]キーを押すと、SnowStack.EncodingProbe.PowerShell がユーザーの PowerShell 環境にインストールされます。
+
+### Windows PowerShell 5.1 へのインストール
+
+ここまでの手順は、PowerShell 7.x を前提としています。
+
+Windows PowerShell 5.1 には Install-PSResource コマンドレットが同梱されていないため、上記のコマンドをそのまま実行してもエラーになります。
+
+Windows PowerShell 5.1 でインストールするには、先に Microsoft.PowerShell.PSResourceGet モジュールを導入する前作業が必要になります。
+
+その手順は分量があるので、以下の補足記事に分けて解説しています。Windows PowerShell 5.1 をお使いの方は、こちらをご覧ください。
+
+[SnowStack.EncodingProbe.PowerShell を Windows PowerShell 5.1 へインストールする方法](/encodingprobe_powershell_install_ps51/)
 
 ### アンインストール方法
 

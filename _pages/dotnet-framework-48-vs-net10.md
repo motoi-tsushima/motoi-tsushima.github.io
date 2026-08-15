@@ -1,5 +1,7 @@
 ---
 title: ".NET Framework 4.8 と .NET 10 の違い"
+layout: single
+author_profile: true
 permalink: /dotnet-framework-48-vs-net10/
 toc: true
 toc_label: "目次"
