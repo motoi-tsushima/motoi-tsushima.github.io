@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_guide/
 author_profile: true
 ---
-2026/07/15 document update
+2026/09/01 document update
 
 ## EncodingProbe とは
 
@@ -33,6 +33,20 @@ SnowStack.EncodingProbe が クラスライブラリで、SnowStack.EncodingProb
 
 2026年6月6日に最初の preview1 をリリースし、何度か改修版のプレリリースを行った後、
 2026年7月14日に正式版の Version 1.0.0 をリリースしました。
+
+その後、2026年9月1日に Version 1.1.0 をリリースしています。
+
+**1.1.0 では、この NuGet パッケージのコードを変更していません。** 公開 API も、クラス構成も、1.0.x のままです。
+
+1.1.0 の機能追加は、すべてコマンドレット側（SnowStack.EncodingProbe.PowerShell）で行っています。
+
+それでもこの NuGet パッケージのバージョン番号を 1.1.0 へ上げたのは、同じ配布物に含まれる DLL のバージョンが食い違わないようにするためです。
+
+そのため、**1.0.2 を使用中の方が 1.1.0 へ更新する必要はありません。** 更新しても動作は変わりません。
+
+コマンドレット側で何を追加したかは、以下の記事で解説しています。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
 ## NuGetパッケージのインストール方法
 
@@ -100,6 +114,23 @@ UTF.Unknown は、BOMの無い UTF-16 と UTF-32 に対応していません。
 そのため、この弱点をカバーするため、日本語やUnicodeの解析は、EncodingDetector で行っています。
 
 日本語（及び東アジア漢字文化圏）では、EncodingDetector の解析だけで済むはずです。
+
+##### UTF.Unknown のバージョン
+
+参照している UTF.Unknown のバージョンは、ターゲットフレームワークによって分けています。
+
+| ターゲット | UTF.Unknown |
+| :---- | :---- |
+| .NET 10 | 2.7.0 |
+| .NET Framework 4.8 | 2.6.0 |
+
+これは揃え忘れではなく、意図的な非対称です。
+
+UTF.Unknown 2.7.0 の netstandard2.0 向けアセットは、System.Memory に依存するようになりました。System.Memory は厳密名付きのアセンブリで、.NET Framework では参照アセンブリと実行時アセンブリのバージョンが食い違います。
+
+通常は app.config のバインディングリダイレクトで解決しますが、バイナリモジュールを Import-Module する Windows PowerShell 5.1 のホストには、app.config を差し込めません。
+
+.NET Framework 4.8 側では 2.7.0 で追加された API を使っておらず、2.6.0 と 2.7.0 で解析結果も変わりません。リスクだけを負う変更になるので、据え置きました。
 
 ### 提供されるメソッドとプロパティ
 
@@ -212,7 +243,9 @@ Detect メソッドにより文字エンコーディングを解析した結果�
 | LineBreakType | LineBreak       | 改行コード種類（Windows型、UNIX型） | CrLf , Lf , Cr の、どれかを示す。<br />混合状態も表します。  |
 | string        | Culture         | 国情報                              | 例として、日本=ja-JP, 韓国=ko, 台湾=zh-TW, 中国=zh-CN        |
 
-PSEncodingName の値は、UsePSName の値に関係無く Get-Content 等の -Encoding で使用可能です。
+PSEncodingName の値は、PowerShell 6.2 以降であれば、UsePSName の値に関係無く Get-Content 等の -Encoding で使用できます。PowerShell 6.2 以降は WebName も -Encoding が受け付けるからです。
+
+但し、`UsePSName = False` は「標準コマンドの -Encoding にそのまま渡せる保証はない」という意味の値です。Windows PowerShell 5.1 では実際に渡せない場合があるので、その点は後述します。
 
 preview5 では `UsePSName = False` の場合に CodePage を返していましたが、この仕様は廃止し、`EncodingWebName` を返すようにしました。
 
@@ -242,7 +275,15 @@ Windows PowerShell 5.1 では、BOM無しのUnicode文字エンコーディン�
 
 PowerShell 6.2 以上では正常なフレンドリ名を返します。
 
-この辺は、正式版リリース時に詳しい解説記事を書くつもりです。
+この辺の詳しい解説は、以下の記事で行っています。
+
+[PowerShell の -Encoding utf8NoBOM は、なぜ WebName で代用できないのか （フレンドリ名の解説）](/why-utf8nobom-cannot-be-webname/)
+
+なお、この「Windows PowerShell 5.1 では判定結果を標準コマンドへ渡せない」という問題は、コマンドレット側の Version 1.1.0 で解決しました。
+
+標準コマンドに橋を架けるのをやめ、自前の読み書きコマンドを持つ方向へ舵を切っています。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
 ### 使用法サンプル
 
@@ -283,7 +324,7 @@ Licensed under MIT License
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_guide/
 
-UTF.Unknown
+UTF.Unknown 2.7.0 (net10.0 build) / 2.6.0 (net48 build)
 Copyright (c) 2018 Nikolay Pultsin
 Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
 (This software uses UTF.Unknown under the terms of MPL 1.1)
@@ -291,14 +332,37 @@ https://github.com/CharsetDetector/UTF-unknown
 https://www.mozilla.org/MPL/1.1/
 ```
 
-
 ## お知らせ欄
 
-繰り返しになりますが EncodingProbe NuGet パッケージの正式版をリリースしました。
+### 2026年9月1日　Version 1.1.0 リリース
+
+Version 1.1.0 をリリースしました。
+
+繰り返しになりますが、**この NuGet パッケージのコードは 1.1.0 で変更していません。** バージョン番号だけを、コマンドレット側と揃えています。
+
+1.0.2 をご利用中の方が、更新する必要はありません。
+
+機能追加は、すべてコマンドレット側で行っています。テキストファイルの読み書きを行う 4 つのコマンドレットを追加しました。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
+[-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
+
+### 2026年7月14日　正式版リリース
+
+EncodingProbe NuGet パッケージの正式版をリリースしました。
 
 Version 1.0.0 のリリース日は、2026年7月14日になります。
 
-ドキュメント類の整理は、これから行います。必要最小限度の説明は、この記事で行っています。
+このとき「詳細ドキュメント類は、しばらくお待ちください」と書いていましたが、フレンドリ名の解説と、コマンドレット 1.1.0 の解説で、必要な内容は書き終えたと考えています。
 
-詳細ドキュメント類は、しばらくお待ちください。
+クラスライブラリとして使う場合の説明は、この記事で足りるはずです。
+
+## 関連資料
+
+- [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
+- [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+- [-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
+- [PowerShell の -Encoding utf8NoBOM は、なぜ WebName で代用できないのか （フレンドリ名の解説）](/why-utf8nobom-cannot-be-webname/)
+- [SnowStack.EncodingProbe（GitHub リポジトリ）](https://github.com/motoi-tsushima/SnowStack.EncodingProbe)
 

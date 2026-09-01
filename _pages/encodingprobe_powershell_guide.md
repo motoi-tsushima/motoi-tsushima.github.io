@@ -5,9 +5,15 @@ classes: wide
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
 ---
-2026/08/15 document update
+2026/09/01 document update
 
 SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を解説します。
+
+2026年9月1日に Version 1.1.0 をリリースし、テキストファイルの読み書きを行う 4 つのコマンドレットを追加しました。
+
+追加分の解説は分量があるので、以下の別記事に分けています。この記事では、インストール方法と 1.0.x から提供しているコマンドレットを扱います。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
 ## インストール方法
 
@@ -68,7 +74,22 @@ Uninstall-PSResource SnowStack.EncodingProbe.PowerShell
 
 ## SnowStack.EncodingProbe.PowerShell の使い方
 
-現在、SnowStack.EncodingProbe.PowerShell パッケージの中には、Resolve-Encoding と Get-EncodingProbePlatformInfo という二つのコマンドレットが含まれています。
+現在、SnowStack.EncodingProbe.PowerShell パッケージの中には、六つのコマンドレットが含まれています。
+
+| コマンドレット | 役割 | 追加バージョン |
+| :---- | :---- | :---- |
+| `Resolve-Encoding` | テキストファイルの文字エンコーディングを推測する | 1.0.0 |
+| `Get-EncodingProbePlatformInfo` | 実行中のプラットフォーム情報を報告する | 1.0.0 |
+| `Get-ProbedContent` | 文字エンコーディングを判定して読む | 1.1.0 |
+| `Set-ProbedContent` | 文字エンコーディングを明示して書く | 1.1.0 |
+| `Add-ProbedContent` | 文字エンコーディングを保って追記する | 1.1.0 |
+| `ConvertTo-DotNetEncoding` | 各種の指定を `System.Text.Encoding` に変換する | 1.1.0 |
+
+この記事では、上の二つを解説します。
+
+1.1.0 で追加した四つのコマンドレットは、統一された文字エンコーディング名の体系を前提としており、まとめて解説しないと意味が伝わりません。よって、以下の別記事で解説しています。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
 ### Resolve-Encoding
 
@@ -136,11 +157,19 @@ UTF.Unknown は欧米などのシングルバイト文字エンコーディン�
 
 **-Strategy オプションの値**
 
-| 単語のオプション値 | 数値のオプション値 | 動作内容                                                     |
-| ------------------ | ------------------ | ------------------------------------------------------------ |
-| default            | 0                  | 最初に独自実装処理で推測し、不明の場合は UTF.Unknown により推測する。オプション指定をしないと、この default になる。 |
-| utfunknown         | 3                  | UTF.Unknown だけで推測する。独自実装処理は使用しない。       |
-| native             | 1                  | 独自実装処理だけで推測する。UTF.Unknown は使用しない。       |
+| 正式名 | 単語のオプション値 | 数値のオプション値 | 動作内容                                                     |
+| :---- | :---- | :---- | :---- |
+| Combined | default            | 0                  | 最初に独自実装処理で推測し、不明の場合は UTF.Unknown により推測する。オプション指定をしないと、この Combined になる。 |
+| UtfUnknownOnly | utfunknown         | 3                  | UTF.Unknown だけで推測する。独自実装処理は使用しない。       |
+| NativeOnly | native             | 1                  | 独自実装処理だけで推測する。UTF.Unknown は使用しない。       |
+
+一番左の列が正式名で、NuGet パッケージ側の `DetectionStrategy` 列挙型のメンバ名と一致しています。どの書き方でも動作は同じで、大文字と小文字も区別しません。
+
+1.1.0 で追加した `Get-ProbedContent` などのコマンドレットも、同じ値を受け付けます。新しく書くスクリプトでは、意味が名前から読み取れる正式名の使用をお勧めします。
+
+-Strategy を実際に切り替えると結果がどう変わるかは、以下の記事で実測値を示して解説しています。
+
+[-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
 
 ##### -Culture
 
@@ -159,6 +188,10 @@ UTF.Unknown は欧米などのシングルバイト文字エンコーディン�
 東アジア圏以外の人々は、このオプションを使用する必要がありません。
 
 つまり、ほとんどの人々にとって、-Culture オプションは使う必要の無いオプションです。
+
+もし使う必要が出てきた場合は、以下の記事で具体例を示して解説しています。日本語環境で韓国語のファイルを読むと、どう文字化けするかの実測値を載せています。
+
+[-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
 
 ### Get-EncodingProbePlatformInfo
 
@@ -258,6 +291,19 @@ Get-Content と Resolve-Encoding を以下の様に組み合わせて利用す�
 
 このように組み合わせると、テキストファイル(text1.txt)の文字エンコーディングがわからない場合でも、テキストファイルの内容を表示してくれます。
 
+但し、この書き方は **Windows PowerShell 5.1 では成立しない場合があります。** 上の例は PSEncodingName に utf8NoBOM が入っている場合ですが、Shift_JIS のファイルでは PowerShell 5.1 の PSEncodingName が空になるからです。
+
+その理由は、この後の「PSEncodingName のフレンドリ名について」で解説します。
+
+1.1.0 では、この問題を解消するために Get-ProbedContent コマンドレットを追加しました。標準コマンドに橋を架けるのではなく、判定と読み込みを一つのコマンドで行います。
+
+```
+# 1.1.0 の書き方。PSEncodingName を経由しないので、PowerShell 5.1 でも動く
+Get-ProbedContent text1.txt
+```
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
 同様の命令を変数を使用して記述すると以下の様に書けます。
 
 ```
@@ -287,6 +333,14 @@ Resolve-Encoding はスクリプトの中で他のコマンドレットと組み
 
 使い方が単純になるように、意図的にワイルドカード未対応としています。将来も対応しません。
 
+なお、1.1.0 で追加した Get-ProbedContent の方は、ワイルドカードとパイプライン入力に対応しています。読み込んだ結果は文字列なので、コレクションを返しても使い難くならないからです。
+
+```
+# Get-ProbedContent はワイルドカードとパイプライン入力に対応している
+Get-ProbedContent *.txt
+Get-ChildItem *.txt | Get-ProbedContent
+```
+
 ### PSEncodingName のフレンドリ名について
 
 既に簡単に解説しましたが、PSEncodingName の返す文字エンコーディングのフレンドリ名は、PowerShell5.1と PowerShell6.2以降とでは、異なる値を返します。
@@ -305,6 +359,20 @@ PowerShell6.2以降では幅広い文字エンコーディングに対応して�
 
 [PowerShell の -Encoding utf8NoBOM は、なぜ WebName で代用できないのか （フレンドリ名の解説）](/why-utf8nobom-cannot-be-webname/)
 
+#### 1.1.0 では、標準コマンドへ橋を架けるのをやめました
+
+ここまで解説したとおり、PSEncodingName の値を標準コマンドへ渡す書き方は、Windows PowerShell 5.1 で成立しない場合があります。
+
+そもそも、Windows PowerShell 5.1 の -Encoding は固定の列挙型で、Shift_JIS を表す値が存在しません。ここに橋を架けるのは無理があります。
+
+そこで Version 1.1.0 では、**自前の読み書きコマンドを持つ**方向へ舵を切りました。
+
+Get-ProbedContent / Set-ProbedContent / Add-ProbedContent は、PowerShell の標準語彙を使いません。このモジュールが定義した統一語彙を使うので、Windows PowerShell 5.1 でも PowerShell 7.x でも同じ名前で同じ結果になります。
+
+なお、Resolve-Encoding の PSEncodingName と UsePSName の仕様は 1.1.0 でも変更していません。標準コマンドと組み合わせる既存のスクリプトは、そのまま動きます。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
 ## 使用しているライブラリ
 
 SnowStack.EncodingProbe.PowerShell は、その機能のほとんどを NuGet パッケージの SnowStack.EncodingProbe によって実現しています。
@@ -312,6 +380,8 @@ SnowStack.EncodingProbe.PowerShell は、その機能のほとんどを NuGet �
 SnowStack.EncodingProbe NuGet パッケージについては、以下のページで解説しています。
 
 [SnowStack.EncodingProbe NuGet Package 解説](https://snow-stack.net/encodingprobe_guide/)
+
+但し、1.1.0 で追加した文字エンコーディング名の統一語彙と、読み書きの処理は、コマンドレット側で実装しています。NuGet パッケージ側は 1.1.0 でコードを変更していません。
 
 ## ライセンス
 
@@ -333,7 +403,7 @@ Licensed under MIT License
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_guide/
 
-UTF.Unknown
+UTF.Unknown 2.7.0 (net10.0 build) / 2.6.0 (net48 build)
 Copyright (c) 2018 Nikolay Pultsin
 Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
 (This software uses UTF.Unknown under the terms of MPL 1.1)
@@ -341,15 +411,42 @@ https://github.com/CharsetDetector/UTF-unknown
 https://www.mozilla.org/MPL/1.1/
 ```
 
+UTF.Unknown のバージョンが .NET 10 用と .NET Framework 4.8 用で分かれているのは、意図的なものです。理由は以下の記事の「なぜこの作りにしたのか」で解説しています。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
+同じ文面は、コマンドからも取得できます。
+
+```
+# ライセンス情報を表示する
+Resolve-Encoding -License
+```
+
 ## お知らせ関連
+
+### 2026年9月1日　Version 1.1.0 リリース
+
+Version 1.1.0 をリリースしました。
+
+Get-ProbedContent / Set-ProbedContent / Add-ProbedContent / ConvertTo-DotNetEncoding の四つのコマンドレットを追加しています。
+
+**Windows PowerShell 5.1 と PowerShell 7.x で、同じスクリプトが同じバイト列を書く**ことが、このバージョンの目的です。
+
+Resolve-Encoding と Get-EncodingProbePlatformInfo は変更していないので、1.0.x 向けに書いたスクリプトはそのまま動きます。
+
+あわせて、Get-Help のヘルプとエラーメッセージを、英語・日本語・韓国語・繁体字中国語・簡体字中国語の 5 言語に対応させました。
+
+追加分の解説は、以下の記事で行っています。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
+[-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
 
 ### 2026年7月14日　正式版リリース
 
 正式版の Version 1.0.0 をリリースしました。
 
-文字エンコーディングのフレンドリ名など、詳細な解説ドキュメントは、これから作成します。
+このとき「詳細な解説ドキュメントは、これから作成します」と書いていましたが、上記の 1.1.0 の記事と、以下のフレンドリ名の記事で解説を行いました。
 
-ドキュメント類は、今しばらくお待ちください。
-
-必要最小限の解説は、この記事で行っています。
+[PowerShell の -Encoding utf8NoBOM は、なぜ WebName で代用できないのか （フレンドリ名の解説）](/why-utf8nobom-cannot-be-webname/)
 
