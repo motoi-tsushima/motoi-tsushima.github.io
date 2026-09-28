@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_probed_content/
 author_profile: true
 ---
-2026/09/01 document update
+2026/09/30 document update
 
 SnowStack.EncodingProbe.PowerShell のバージョン 1.1.0 で追加した、4 つのコマンドレットの解説です。
 
@@ -356,7 +356,7 @@ BOM は、指定した語彙にかかわらず常に読み飛ばします。`-En
 | パラメータ | 採用しなかった理由 |
 | :---- | :---- |
 | `-Delimiter` | `-Raw` で読んでから `-split` すれば同じことができ、正規表現が使える分そちらが強力です |
-| `-Tail` | 末尾からの逆方向読み取りと文字エンコーディング判定の組み合わせは、実装が重くなります。全行読んでから末尾 N 件を返すなら `\| Select-Object -Last N` と変わりません |
+| `-Tail` | 末尾からの逆方向読み取りと文字エンコーディング判定の組み合わせは、実装が重くなります。全行読んでから末尾 N 件を返すなら <code>&#124; Select-Object -Last N</code> と変わりません |
 | `-Wait` / `-Stream` / `-ReadCount` | 標準コマンドとの完全互換を目指していないためです |
 | FileSystem 以外のプロバイダー | 同上です |
 
@@ -710,9 +710,11 @@ ISO-2022-TW（50229）などが該当します。この場合は `-Encoding` で
 | `Get-Help`（MAML ヘルプ） | 英語 / 日本語 / 韓国語 / 繁体字中国語 / 簡体字中国語 |
 | エラーメッセージ | 同上 |
 
-未対応のカルチャー（`zh-HK` など）では英語になります。
+1.1.0 では、未対応のカルチャー（`zh-HK` など）では英語になります。
 
-香港（繁体字広東語）は、後のバージョンで対応する予定です。
+香港・マカオ（`zh-HK` / `zh-MO`）には、1.2.0 で対応しました。1.2.0 では、これらのカルチャーで繁体字中国語のヘルプとエラーメッセージを表示します。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 
 一点、注意していただきたいことがあります。
 
@@ -937,7 +939,7 @@ ISO-2022 系の判定には、まだ問題が残っています。
 | SO/SI 形式の 1 バイトカナを検出できない | 未対応 |
 | 判定できても .NET が扱えないコードページがある | 1.1.0 で非終了エラーとして報告する対応を実施 |
 
-いずれも判定エンジン側の課題で、1.2.0 以降で扱う予定です。
+いずれも判定エンジン側の課題です。1.2.0 以降で扱う予定でしたが、1.2.0 では対応していません（1.2.0 では、世界の言語と香港の Big5 への対応を優先しました）。
 
 該当する文字エンコーディングを確実に扱いたい場合は、`-Encoding` で明示的に指定してください。判定を行わないので、この問題を回避できます。
 
@@ -979,6 +981,7 @@ Version 1.1.0 をリリースしました。
 
 ## 関連資料
 
+- [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 - [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 - [SnowStack.EncodingProbe NuGet Package 解説](/encodingprobe_guide/)
 - [-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)

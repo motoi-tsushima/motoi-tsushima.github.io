@@ -53,3 +53,17 @@ SnowStack.EncodingProbe.PowerShell コマンドパッケージのインストー
 
 [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 
+### テキストファイルの読み書きと変換のコマンドレット
+
+文字エンコーディングを判定して読む Get-ProbedContent や、Windows PowerShell 5.1 と PowerShell 7.x で同じバイト列を書く Set-ProbedContent などのコマンドレットを、1.1.0 で追加しました。
+
+[SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
+1.2.0 では、標準の Out-File の代わりになる Out-ProbedFile と、既存のファイルの文字エンコーディング・BOM・改行を変換する Convert-ProbedContent を追加しました。東アジア以外の言語と、香港の Big5 の判定も改善しています。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
+外国語のテキストファイルを扱う場合は、-Culture と -Strategy の二つのオプションの解説もご覧ください。
+
+[-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
+

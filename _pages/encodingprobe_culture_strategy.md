@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_culture_strategy/
 author_profile: true
 ---
-2026/09/01 document update
+2026/09/30 document update
 
 SnowStack.EncodingProbe.PowerShell の `-Culture` と `-Strategy` という、二つのオプションの解説です。
 
@@ -19,15 +19,19 @@ SnowStack.EncodingProbe.PowerShell の `-Culture` と `-Strategy` という、�
 
 そういう方には、意味があると思います。
 
-`-Culture` と `-Strategy` は、1.0.x から `Resolve-Encoding` に用意されていました。バージョン 1.1.0 で、`Get-ProbedContent` / `Set-ProbedContent` / `Add-ProbedContent` の 3 コマンドにも追加しています。
+`-Culture` と `-Strategy` は、1.0.x から `Resolve-Encoding` に用意されていました。バージョン 1.1.0 で、`Get-ProbedContent` / `Set-ProbedContent` / `Add-ProbedContent` の 3 コマンドにも追加し、1.2.0 で追加した `Out-ProbedFile` / `Convert-ProbedContent` にも用意しています。
+
+**1.2.0 で、判定処理を改善しました。** 1.1.0 では、日本語環境でドイツ語などのファイルを読むと誤判定するため、`-Strategy UtfUnknownOnly` の指定をお勧めしていました。1.2.0 では、既定のままで正しく判定します。この記事も、1.2.0 に合わせて書き直しています。
 
 コマンドそのものの解説は、以下の記事で行っています。
 
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
 [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 
-（この記事に掲載した実行結果は、すべて実機で採取したものです。採取日は 2026年8月31日、環境は Windows 11 の日本語環境です。PowerShell 7.6.5 と Windows PowerShell 5.1.26100 の両方で採取しており、特に断らない限り両ホストで同じ結果になります）
+（この記事に掲載した実行結果は、すべて実機で採取したものです。環境は Windows 11 の日本語環境で、PowerShell 7.x と Windows PowerShell 5.1.26100 の両方で採取しており、特に断らない限り両ホストで同じ結果になります。1.1.0 の結果は 2026年8月31日に PowerShell 7.6.5 で、1.2.0 の結果は 2026年9月28日に PowerShell 7.6.6 で採取しました）
 
 ## 文字エンコーディングの判定は、バイト列だけでは決まらない
 
@@ -98,6 +102,8 @@ Get-ProbedContent .\korean.txt -Culture ko-KR
 
 **同じファイル、同じコマンド、違うカルチャー。それだけで結果が変わります。**
 
+この結果は、1.2.0 でも変わりません。
+
 これは判定の不具合ではありません。バイト列としては、どちらも正しいのです。
 
 判定処理には決めようがないので、利用者が教えてやる必要があります。
@@ -138,6 +144,33 @@ Get-ProbedContent .\korean.txt -Culture ko-KR |
 
 下の 2 行は、より単純です。EUC-KR と CP949、EUC-TW と CP950 は、それぞれ後者が前者を包含する関係にあるので、後者を選んでおけば実害が出ません。
 
+### 繁体字と簡体字の取り違え（1.2.0 で改善）
+
+1.1.0 では、台湾のカルチャーで簡体字（GBK）のファイルを読むと Big5 と、大陸のカルチャーで繁体字（Big5）のファイルを読むと GB18030 と、誤って判定していました。
+
+Big5 と GBK も、バイト構造が似ていて、互いのバイト列として成立してしまうからです。
+
+1.2.0 では、サードパーティ製の判定ライブラリ UTF.Unknown（後述）の結果と突き合わせるようにしました。UTF.Unknown が反対側の系統を高い信頼度で判定した場合は、その系統で判定をやり直します。
+
+| ファイル | カルチャー | 1.1.0 | 1.2.0 |
+| :---- | :---- | :---- | :---- |
+| 簡体字 GBK | zh-TW | `950` / `big5` | `936` / `gbk` |
+| 繁体字 Big5 | zh-CN | `54936` / `gb18030` | `950` / `big5` |
+
+ただし、この突き合わせが働くのは、ある程度の長さのある文書です。短い文では、UTF.Unknown が系統を判定できないことがあります。
+
+### 香港のカルチャー（1.2.0 で対応）
+
+1.2.0 から、香港・マカオのカルチャー（`zh-HK` / `zh-MO`）と広東語（`yue`）を、台湾とは分けて扱うようになりました。
+
+とはいえ、香港の Big5（HKSCS）は台湾の Big5 の上位互換で、バイト列からは区別できません。判定結果は、台湾と同じ `950` / `big5` です。
+
+HKSCS 固有の文字は、Unicode の私用領域の文字として読み込まれます。詳しくは、1.2.0 の記事で解説しています。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
+また、1.2.0 からは `zh-Hant-HK` や `zh-Hans-CN` のように、用字（Hant = 繁体字、Hans = 簡体字）を含むカルチャー名も、正しく解釈します。1.1.0 では、この形のカルチャー名を渡すと判定不能になっていました。
+
 ### -Culture が効く場所
 
 `-Culture` は、`Resolve-Encoding` と**同じ名前・同じ値**を取ります。
@@ -152,6 +185,8 @@ Get-ProbedContent .\korean.txt -Culture ko-KR |
 | `Get-ProbedContent` | `-Encoding` 省略時に読み込むファイル |
 | `Set-ProbedContent` / `Add-ProbedContent` | `-EncodingFrom` の参照ファイル |
 | `Set-ProbedContent` / `Add-ProbedContent` | `-Encoding` 省略時（`Auto`）の、書き込み先・追記先の既存ファイル |
+| `Out-ProbedFile` | `-EncodingFrom` の参照ファイル、`-Encoding Auto` の出力先、`-Append` の追記先の既存ファイル |
+| `Convert-ProbedContent` | `-SourceEncoding` 省略時の変換元のファイル |
 
 つまり、読むときだけでなく、**書くときにも効きます。**
 
@@ -183,6 +218,10 @@ Show-Bytes .\from_ko.txt
 
 `-EncodingFrom` を使う場面では、参照ファイルの判定が正しいかどうかを、先に `Resolve-Encoding` で確認しておくことをお勧めします。
 
+この結果は、1.2.0 でも同じです。`Set-ProbedContent` の書き込みは、.NET の既定の動作に従い、符号化できない文字を `?` に置き換えます。
+
+なお、1.2.0 で追加した `Convert-ProbedContent` は、このように文字が失われる変換を行いません。変換先で表現できない文字があれば、そのファイルは変換せずにエラーを報告します。
+
 （`Show-Bytes` は、ファイルの中身を 16 進数で表示する自作のヘルパー関数です。定義は [新コマンド解説の記事](/encodingprobe_probed_content/) に載せています）
 
 ## -Strategy — 判定処理の分業
@@ -212,11 +251,11 @@ UTF-16 と UTF-32 は「先頭に BOM を付けることを推奨」している
 
 `-Strategy` は、この分業を利用者が上書きするためのオプションです。
 
-### 欧米のテキストを日本語環境で読むと誤判定します
+### 欧米のテキストを日本語環境で読むと、1.1.0 では誤判定しました
 
 ここが、この記事で一番書きたかったところです。
 
-windows-1252 のドイツ語テキストを用意しました。中身は `Größe Straße für Maßnahmen.` のような、ウムラウトとエスツェットを含む文章です。
+windows-1252 のドイツ語テキストを用意しました。中身は `Größe Straße für Maßnahmen.` という、ウムラウトとエスツェットを含む文章です。
 
 これを日本語カルチャーの環境で、3 通りの判定方式にかけました。
 
@@ -227,7 +266,7 @@ Get-ProbedContent .\german.txt -Strategy NativeOnly
 Get-ProbedContent .\german.txt -Strategy UtfUnknownOnly
 ```
 
-結果は以下のとおりです。
+1.1.0 の結果は以下のとおりです。
 
 | 指定 | 判定結果 | 復号結果 |
 | :---- | :---- | :---- |
@@ -235,31 +274,49 @@ Get-ProbedContent .\german.txt -Strategy UtfUnknownOnly
 | `-Strategy NativeOnly` | `932` / `shift_jis` | **文字化け** |
 | `-Strategy UtfUnknownOnly` | `28591` / `iso-8859-1` | **正しく復号** |
 
-`UtfUnknownOnly` を指定したときだけ、「Größe」「Straße」が正しく読めます。
+1.1.0 では、`UtfUnknownOnly` を指定したときだけ、「Größe」「Straße」が正しく読めました。
 
-両ホストで同じ結果になります。
-
-### 既定の Combined でも救われない理由
+### 1.1.0 の Combined で救われなかった理由
 
 上の表で驚くのは、**既定の `Combined` でも救われない**という点だと思います。
 
-`Combined` は「独自判定を先に走らせ、独自判定が答えを出せなかったときだけ UTF.Unknown へ委ねる」という設計です。
+1.1.0 の `Combined` は「独自判定を先に走らせ、独自判定が答えを出せなかったときだけ UTF.Unknown へ委ねる」という設計でした。
 
-ドイツ語のテキストに対して、独自判定は Shift-JIS という答えを出してしまいました。
+ドイツ語のテキストに対して、独自判定は Shift-JIS という答えを出してしまいました。`üß` は windows-1252 で `FC DF` の 2 バイトになり、これが Shift_JIS の外字領域の 2 バイト文字として、構造上は成立してしまうからです。
 
 答えを出してしまった以上、UTF.Unknown の出番は来ません。
 
-つまり、**独自判定が「自信を持って誤答した」場合、`Combined` では救えないのです。**
+つまり、**独自判定が「自信を持って誤答した」場合、1.1.0 の `Combined` では救えなかったのです。**
 
-だから `-Strategy` という逃げ道が必要になります。
+独自判定は東アジア漢字文化圏のマルチバイトを担当し、UTF.Unknown は欧米のシングルバイトを担当します。担当外の入力を与えれば、間違えます。
 
-この結果は、分業の設計そのものを説明していると思います。
+### 1.2.0 では、既定のままで正しく読めます
 
-独自判定は東アジア漢字文化圏のマルチバイトを担当し、UTF.Unknown は欧米のシングルバイトを担当します。
+1.2.0 では、`Combined` の設計を変えました。
 
-担当外の入力を与えれば、間違えます。
+独自判定が東アジアの旧マルチバイト文字コードを答えた場合も、UTF.Unknown にも判定させて、結果を突き合わせます。UTF.Unknown が十分な確かさ（信頼度 0.55 超）で「シングルバイトの文字エンコーディングだ」と判定した場合は、そちらを採用します。
 
-**欧米のシングルバイト文字エンコーディングを日本語カルチャーの環境で読むときは、`-Strategy UtfUnknownOnly` を指定してください。** これが、この記事の実用的な結論になります。
+本物の日本語のテキストに対して、UTF.Unknown がシングルバイトを高い信頼度で返すことはないので、日本語の判定結果は変わりません。
+
+同じドイツ語のファイルを、1.2.0 で判定した結果です。
+
+| 指定 | 判定結果 | 復号結果 |
+| :---- | :---- | :---- |
+| `-Strategy Combined`（既定） | `28591` / `iso-8859-1` | **正しく復号** |
+| `-Strategy NativeOnly` | `932` / `shift_jis` | **文字化け** |
+| `-Strategy UtfUnknownOnly` | `28591` / `iso-8859-1` | **正しく復号** |
+
+既定の `Combined` のままで、正しく読めるようになりました。両ホストで同じ結果になります。
+
+`NativeOnly` は独自判定だけを使う指定なので、突き合わせを行いません。1.2.0 でも文字化けします。
+
+なお、東アジア以外のカルチャー（ドイツ語やフランス語の環境など）では、東アジアの旧マルチバイト文字コードの判定そのものを行いません（1.1.0 でも同じです）。この問題が起きるのは、東アジアのカルチャーの環境だけです。
+
+**1.2.0 では、欧米のシングルバイトのファイルを読むために `-Strategy` を指定する必要は、基本的にありません。**
+
+ただし、おおむね 90 バイト以下の短いファイルは例外です。短い文に対する UTF.Unknown の精度の限界で、東アジアのカルチャーでは誤判定する場合があります。この場合は `-Strategy UtfUnknownOnly` でも正しく判定できるとは限らないので、`-Encoding` で文字エンコーディングを明示してください。
+
+1.1.0 をお使いの場合は、引き続き `-Strategy UtfUnknownOnly` を指定してください。
 
 逆に、欧米のカルチャーの環境で日本語の Shift_JIS ファイルを読む場合は、`-Culture ja-JP` を指定することになります。こちらは `-Strategy` ではなく `-Culture` の出番です。
 
@@ -269,7 +326,7 @@ Get-ProbedContent .\german.txt -Strategy UtfUnknownOnly
 
 | 正式名 | 別名 | 数値 | 動作内容 |
 | :---- | :---- | :---- | :---- |
-| `Combined` | `default` | `0` | 最初に独自実装で判定し、不明の場合は UTF.Unknown で判定する。省略時はこれになる |
+| `Combined` | `default` | `0` | 最初に独自実装で判定し、不明の場合は UTF.Unknown で判定する。1.2.0 からは、独自実装が東アジアの旧マルチバイトと判定した場合も UTF.Unknown と突き合わせる。省略時はこれになる |
 | `NativeOnly` | `native` | `1` | 独自実装だけで判定する。UTF.Unknown は使用しない |
 | `UtfUnknownOnly` | `utfunknown` | `3` | UTF.Unknown だけで判定する。独自実装は使用しない |
 
@@ -361,11 +418,22 @@ ISO-2022 系の判定には、まだ問題が残っています。
 | SO/SI 形式の 1 バイトカナを検出できない | 未対応 |
 | 判定できても .NET が扱えないコードページがある | 1.1.0 で非終了エラー（`CodePageNotAvailable`）として報告する対応を実施 |
 
-上の 2 件は判定エンジン側の課題で、1.2.0 以降で扱う予定です。
+上の 2 件は判定エンジン側の課題で、1.2.0 でも未対応です。
 
 3 件目については、判定は成功しているのに、実行環境の .NET がそのコードページを提供していない、という状態です。ISO-2022-TW（50229）が該当します。
 
 1.1.0 では、これを対象ファイルごとの非終了エラーとして報告し、`-Encoding` での明示指定を案内するようにしました。
+
+1.2.0 の判定の改善で、新たに分かった限界もあります。
+
+| 現象 | 状態 |
+| :---- | :---- |
+| おおむね 90 バイト以下の短いシングルバイト系のテキストを、東アジアのカルチャーで誤判定する | UTF.Unknown の精度の限界のため未対応 |
+| ウクライナ語（windows-1251 / KOI8-U）が判定できない | UTF.Unknown の信頼度が低いため未対応 |
+| ルーマニア語（ISO-8859-16）が判定できない | .NET がこの文字エンコーディングを提供していないため。判定失敗のエラーとして報告する |
+| 大陸のカルチャーで、HKSCS 入りの Big5 を GB18030 と判定する | 未対応。`-Culture zh-HK` を指定してください |
+
+ルーマニア語については、1.1.0 では `NullReferenceException` が発生していました。1.2.0 で、判定失敗の非終了エラーとして報告するように直しています。
 
 **該当する文字エンコーディングを確実に扱いたい場合は、`-Encoding` で明示的に指定してください。** 判定を行わないので、これらの問題を回避できます。
 
@@ -376,8 +444,9 @@ ISO-2022 系の判定には、まだ問題が残っています。
 | 状況 | 指定するもの |
 | :---- | :---- |
 | 自分の国のテキストファイルだけを扱う | どちらも不要 |
-| 日本語環境で、韓国語・中国語・台湾のファイルを読む | `-Culture ko-KR` / `-Culture zh-CN` / `-Culture zh-TW` |
-| 日本語環境で、欧米のシングルバイトのファイルを読む | `-Strategy UtfUnknownOnly` |
+| 日本語環境で、韓国語・中国語・台湾・香港のファイルを読む | `-Culture ko-KR` / `-Culture zh-CN` / `-Culture zh-TW` / `-Culture zh-HK` |
+| 日本語環境で、欧米のシングルバイトのファイルを読む | 1.2.0 ではどちらも不要。1.1.0 では `-Strategy UtfUnknownOnly` |
+| 短い（90 バイト程度以下の）欧米のファイルを読む | どちらも不要。`-Encoding` で明示する |
 | 欧米の環境で、日本語のファイルを読む | `-Culture ja-JP` |
 | 文字エンコーディングが分かっている | どちらも不要。`-Encoding` で明示する |
 
@@ -395,6 +464,7 @@ ISO-2022 系の判定には、まだ問題が残っています。
 
 ## 関連資料
 
+- [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 - [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 - [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 - [SnowStack.EncodingProbe NuGet Package 解説](/encodingprobe_guide/)

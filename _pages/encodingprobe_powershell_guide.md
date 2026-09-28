@@ -5,15 +5,19 @@ classes: wide
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
 ---
-2026/09/01 document update
+2026/09/30 document update
 
 SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を解説します。
 
 2026年9月1日に Version 1.1.0 をリリースし、テキストファイルの読み書きを行う 4 つのコマンドレットを追加しました。
 
+2026年9月30日に Version 1.2.0 をリリースし、ファイルへの出力と変換を行う 2 つのコマンドレットを追加しました。あわせて、東アジア以外の言語と、香港の Big5 の判定を改善しています。
+
 追加分の解説は分量があるので、以下の別記事に分けています。この記事では、インストール方法と 1.0.x から提供しているコマンドレットを扱います。
 
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 
 ## インストール方法
 
@@ -74,7 +78,7 @@ Uninstall-PSResource SnowStack.EncodingProbe.PowerShell
 
 ## SnowStack.EncodingProbe.PowerShell の使い方
 
-現在、SnowStack.EncodingProbe.PowerShell パッケージの中には、六つのコマンドレットが含まれています。
+現在、SnowStack.EncodingProbe.PowerShell パッケージの中には、八つのコマンドレットが含まれています。
 
 | コマンドレット | 役割 | 追加バージョン |
 | :---- | :---- | :---- |
@@ -84,12 +88,20 @@ Uninstall-PSResource SnowStack.EncodingProbe.PowerShell
 | `Set-ProbedContent` | 文字エンコーディングを明示して書く | 1.1.0 |
 | `Add-ProbedContent` | 文字エンコーディングを保って追記する | 1.1.0 |
 | `ConvertTo-DotNetEncoding` | 各種の指定を `System.Text.Encoding` に変換する | 1.1.0 |
+| `Out-ProbedFile` | オブジェクトを整形して、文字エンコーディングを指定してファイルに書き出す | 1.2.0 |
+| `Convert-ProbedContent` | 既存のファイルの文字エンコーディング・BOM・改行を変換する | 1.2.0 |
 
 この記事では、上の二つを解説します。
 
 1.1.0 で追加した四つのコマンドレットは、統一された文字エンコーディング名の体系を前提としており、まとめて解説しないと意味が伝わりません。よって、以下の別記事で解説しています。
 
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
+
+1.2.0 で追加した二つのコマンドレットも、同じ文字エンコーディング名の体系を使います。こちらは以下の別記事で解説しています。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
+1.2.0 では、`Resolve-Encoding` のパラメータと戻り値は変更していません。ただし、内部で使っている判定処理を改善したので、東アジアの環境で欧米の言語のファイルを判定した場合などに、判定結果が 1.1.0 と変わります。詳しくは上の 1.2.0 の記事をご覧ください。
 
 ### Resolve-Encoding
 
@@ -151,6 +163,8 @@ UTF.Unknown は欧米などのシングルバイト文字エンコーディン�
 
 標準では、まず独自実装で文字エンコーディングの推測を行い、不明の場合は UTF.Unknown を使用します。(この点は mfprobe・mfsr も同様の処理を行っています)
 
+1.2.0 からは、独自実装が東アジアの旧マルチバイト文字エンコーディングと推測した場合にも、UTF.Unknown の推測結果と突き合わせるようにしました。UTF.Unknown が十分な確かさで欧米などのシングルバイト文字エンコーディングと推測した場合は、そちらを採用します。これにより、日本語環境でドイツ語のファイルを Shift_JIS と誤って推測する問題を解消しています。
+
 -Strategy オプションで推測手順を変更できます。
 
 -Strategy オプションの値には、以下の表のように「単語の値」と、簡単な「数値の値」が利用できます。
@@ -188,6 +202,8 @@ UTF.Unknown は欧米などのシングルバイト文字エンコーディン�
 東アジア圏以外の人々は、このオプションを使用する必要がありません。
 
 つまり、ほとんどの人々にとって、-Culture オプションは使う必要の無いオプションです。
+
+1.2.0 からは、香港・マカオのカルチャー（`zh-HK` / `zh-MO`）と広東語（`yue`）を、台湾とは分けて扱うようになりました。また、`zh-Hant-HK` のような用字を含むカルチャー名も、正しく解釈します。
 
 もし使う必要が出てきた場合は、以下の記事で具体例を示して解説しています。日本語環境で韓国語のファイルを読むと、どう文字化けするかの実測値を載せています。
 
@@ -383,6 +399,8 @@ SnowStack.EncodingProbe NuGet パッケージについては、以下のペー�
 
 但し、1.1.0 で追加した文字エンコーディング名の統一語彙と、読み書きの処理は、コマンドレット側で実装しています。NuGet パッケージ側は 1.1.0 でコードを変更していません。
 
+1.2.0 では、NuGet パッケージ側の判定処理を改修しました（東アジア以外の言語と、香港の Big5 への対応）。コマンドレットの判定の改善は、この改修によるものです。
+
 ## ライセンス
 
 ライセンスは **MITライセンス** です。
@@ -423,6 +441,24 @@ Resolve-Encoding -License
 ```
 
 ## お知らせ関連
+
+### 2026年9月30日　Version 1.2.0 リリース
+
+Version 1.2.0 をリリースしました。
+
+Out-ProbedFile / Convert-ProbedContent の二つのコマンドレットを追加しています。
+
+Out-ProbedFile は、標準の Out-File の代わりに、Windows PowerShell 5.1 と PowerShell 7.x で同じバイト列を書き出すコマンドです。Convert-ProbedContent は、既存のファイルの文字エンコーディング・BOM・改行を、文字を失わずに変換するコマンドです。
+
+判定処理も改善し、東アジアの環境で欧米の言語のファイルを誤判定する問題と、香港の Big5 の扱いを直しました。ルーマニア語などのファイルで例外が発生する、1.1.0 から存在した不具合も修正しています。
+
+Set-ProbedContent / Add-ProbedContent の -Force が、書き込み後に読み取り専用の属性を元に戻すようになりました（1.1.0 の不具合の修正）。
+
+また、香港・マカオのカルチャーでも、Get-Help のヘルプとエラーメッセージが繁体字中国語で表示されるようになりました。
+
+追加分の解説は、以下の記事で行っています。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 
 ### 2026年9月1日　Version 1.1.0 リリース
 

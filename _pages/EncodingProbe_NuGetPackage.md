@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_guide/
 author_profile: true
 ---
-2026/09/01 document update
+2026/09/30 document update
 
 ## EncodingProbe とは
 
@@ -34,15 +34,36 @@ SnowStack.EncodingProbe が クラスライブラリで、SnowStack.EncodingProb
 2026年6月6日に最初の preview1 をリリースし、何度か改修版のプレリリースを行った後、
 2026年7月14日に正式版の Version 1.0.0 をリリースしました。
 
-その後、2026年9月1日に Version 1.1.0 をリリースしています。
+その後、2026年9月1日に Version 1.1.0 を、2026年9月30日に Version 1.2.0 をリリースしています。
+
+### Version 1.2.0
+
+**1.2.0 では、この NuGet パッケージの判定処理を改修しました。** 1.0.x・1.1.0 を使用中の方は、1.2.0 への更新をお勧めします。
+
+主な変更は以下のとおりです。
+
+| 変更 | 内容 |
+| :---- | :---- |
+| 東アジア以外の言語への対応 | 日本語などの東アジアのカルチャーで、欧米のシングルバイトのテキスト（windows-1252 のドイツ語など）を、Shift_JIS などと誤判定しなくなりました |
+| UTF-8 の判定の厳密化 | 規格（RFC 3629）どおりの整形式のバイト列だけを UTF-8 と判定します |
+| 香港の Big5 への対応 | 香港・マカオ・広東語のカルチャーを台湾と分けて扱い、`zh-Hant-HK` のようなカルチャー名も解釈します |
+| 繁体字と簡体字の取り違えの修正 | 台湾・香港のカルチャーで簡体字を Big5 と、大陸のカルチャーで繁体字を GB18030 と誤判定しなくなりました |
+| 不具合の修正 | ルーマニア語などのテキストで `NullReferenceException` が発生していたのを直しました（1.1.0 から存在した不具合） |
+| 不具合の修正 | `Detect(Stream)` で、UTF.Unknown による判定が機能していなかったのを直しました |
+
+**公開 API は変更していません。** クラス構成も、メソッドも、1.1.0 のままです。判定結果が変わるのは、上の表に挙げたケースです。
+
+変更の詳しい内容は、以下の記事で解説しています。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
+### Version 1.1.0
 
 **1.1.0 では、この NuGet パッケージのコードを変更していません。** 公開 API も、クラス構成も、1.0.x のままです。
 
 1.1.0 の機能追加は、すべてコマンドレット側（SnowStack.EncodingProbe.PowerShell）で行っています。
 
 それでもこの NuGet パッケージのバージョン番号を 1.1.0 へ上げたのは、同じ配布物に含まれる DLL のバージョンが食い違わないようにするためです。
-
-そのため、**1.0.2 を使用中の方が 1.1.0 へ更新する必要はありません。** 更新しても動作は変わりません。
 
 コマンドレット側で何を追加したかは、以下の記事で解説しています。
 
@@ -115,6 +136,23 @@ UTF.Unknown は、BOMの無い UTF-16 と UTF-32 に対応していません。
 
 日本語（及び東アジア漢字文化圏）では、EncodingDetector の解析だけで済むはずです。
 
+##### 1.2.0 での変更 — UTF.Unknown との突き合わせ
+
+1.1.0 までは、EncodingDetector が答えを出した時点で解析を終えていました。
+
+ところが、EncodingDetector はバイト構造の妥当性だけを見ているので、欧米のシングルバイトのテキストが、東アジアの旧マルチバイト文字コードとして構造上成立してしまうことがあります。たとえば日本語 OS 上で windows-1252 のドイツ語を解析すると、`üß`（`FC DF`）が Shift_JIS の外字として成立し、Shift_JIS と誤判定していました。
+
+1.2.0 では、以下の二点を変更しました。
+
+- **東アジア以外のカルチャーでは、東アジアの旧マルチバイト文字コードの解析を行いません。** 1.1.0 でも大部分はこの動作でしたが、カルチャーと解析対象の対応表を一か所にまとめ、規則として明確にしました。ただし、BOM・ISO-2022・ASCII・Unicode（UTF-8 / UTF-16 / UTF-32）の解析は、カルチャーに関係なく行います
+- **デフォルトの Combined では、EncodingDetector が東アジアの旧マルチバイト文字コードと判定した場合も、UTF.Unknown の結果と突き合わせます。** UTF.Unknown が信頼度 0.55 を超えてシングルバイト文字エンコーディングと判定した場合は、そちらを採用します
+
+本物の日本語や中国語のテキストに対して、UTF.Unknown がシングルバイトを高い信頼度で返すことはないので、東アジアの言語の判定結果は変わりません。
+
+同じ仕組みで、繁体字と簡体字の取り違えも直しています。UTF.Unknown が EncodingDetector と反対の系統（Big5 系と GB 系）を信頼度 0.8 以上で返した場合は、その系統で解析をやり直します。
+
+なお、おおむね 90 バイト以下の短いシングルバイト系のテキストでは、UTF.Unknown の精度の限界により、東アジアのカルチャーで誤判定する場合が残っています。
+
 ##### UTF.Unknown のバージョン
 
 参照している UTF.Unknown のバージョンは、ターゲットフレームワークによって分けています。
@@ -164,6 +202,8 @@ EncodingInformation Detect(Stream stream, EncodingDetectorOptions options = null
 
 テキストやバイナリといったストリームのモードをアプリ側で制御したい場合に便利な関数仕様です。
 
+※ 1.1.0 までの Detect(Stream) には、独自実装の解析でストリームを読み切った後のストリームを UTF.Unknown に渡してしまい、UTF.Unknown による解析が機能しない不具合がありました。1.2.0 で修正し、ストリームを一度だけ読んで両方の解析に渡すようにしています。ストリームを渡して使用している方は、1.2.0 へ更新してください。
+
 (3) 解析対象ファイルのパス名を渡す。
 
 ```
@@ -195,7 +235,7 @@ DetectionStrategy 列挙型では、文字エンコーディングの解析方�
 | -------------------------- | ------------------------------------------------------------ |
 | NativeOnly                 | 文字エンコーディングの解析を、独自実装の EncodingDetector だけで行う。UTF.Unknown の補完を使用しない。 |
 | UtfUnknownOnly             | 文字エンコーディングの解析を、サードパーティ製品の UTF.Unknown だけで行う。独自実装は使用しない。 |
-| Combined                   | 文字エンコーディングの解析を、まず独自実装の EncodingDetector で行った上で、解析結果が不明の場合に、サードパーティ製品の UTF.Unknown で補完的に解析を実行する。<br />デフォルト設定ではこれが選択される。 |
+| Combined                   | 文字エンコーディングの解析を、まず独自実装の EncodingDetector で行った上で、解析結果が不明の場合に、サードパーティ製品の UTF.Unknown で補完的に解析を実行する。<br />1.2.0 からは、EncodingDetector が東アジアの旧マルチバイト文字コードと判定した場合も、UTF.Unknown の結果と突き合わせる。<br />デフォルト設定ではこれが選択される。 |
 
 参考までに、EncodingDetectorOptions パラメータを省略した場合、日本語環境では { Strategy = Combined , Culture = ja-JP } となります。
 
@@ -225,6 +265,16 @@ DetectionStrategy 列挙型では、文字エンコーディングの解析方�
 
 中国人なら、"zh-CN" です。
 
+香港なら "zh-HK" です。1.2.0 からは、香港・マカオ（"zh-HK" / "zh-MO"）と広東語（"yue"）を台湾と分けて扱い、台湾の文字エンコーディングである EUC-TW を候補から外します。
+
+ただし、台湾の Big5 と香港の Big5（HKSCS）はバイト構造から区別できないので、判定結果はどちらも `950 / big5` になります。HKSCS 固有の文字は、Unicode の私用領域（U+E000〜U+F8FF）の文字として読み込まれ、同じ Big5 で書き戻せば元のバイト列に戻ります。
+
+私用領域の文字（日本語の外字を含みます）の扱いは、以下の記事で解説しています。EUC-JP の外字を扱う場合は、`EncodingWebName` ではなく `CodePage` でエンコーディングを作る必要があるので、ご注意ください。
+
+[外字（私用領域）の扱い — SnowStack.EncodingProbe](/encodingprobe_private_use_area/)
+
+1.2.0 からは、カルチャー名を「言語・用字・地域」に分解して解釈するので、.NET 10 が使う "zh-Hant-HK" や "zh-Hans-CN" のような形のカルチャー名も指定できます。
+
 それぞれの母国語OSで実行するならば、EncodingDetectorOptions を省略して問題ありません。
 
 また、UTF.Unknown だけを使用するなら、EncodingDetectorOptions を省略して問題ありません。
@@ -252,6 +302,8 @@ preview5 では `UsePSName = False` の場合に CodePage を返していまし�
 Windows PowerShell 5.1 ではBOM無しのUTF-8やUTF-16などUnicode文字エンコーディングが全て使用できないので、その場合は PSEncodingName に空白を返します。
 
 PowerShell 6.2 以降の場合は、BOM無しでも PSEncodingName に該当するフレンドリ名を返します。 
+
+UTF.Unknown は、.NET が提供していない文字エンコーディング（ルーマニア語の ISO-8859-16 など）を判定結果として返すことがあります。その場合、EncodingInformation の CodePage は -1 となり、EncodingWebName に UTF.Unknown が返した名前（`iso-8859-16` など）が入ります。1.1.0 まではこの場合に `NullReferenceException` が発生していましたが、1.2.0 で修正しました。
 
 ### EncodingDetector 
 
@@ -334,6 +386,18 @@ https://www.mozilla.org/MPL/1.1/
 
 ## お知らせ欄
 
+### 2026年9月30日　Version 1.2.0 リリース
+
+Version 1.2.0 をリリースしました。
+
+1.1.0 とは違い、**今回はこの NuGet パッケージの判定処理を改修しています。** 公開 API は変更していません。
+
+東アジアの環境で欧米の言語のテキストを誤判定する問題、繁体字と簡体字の取り違え、香港のカルチャーの扱いを直しました。ルーマニア語などで例外が発生する不具合と、Detect(Stream) の不具合も修正しています。
+
+1.0.x・1.1.0 をご利用中の方は、1.2.0 への更新をお勧めします。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
 ### 2026年9月1日　Version 1.1.0 リリース
 
 Version 1.1.0 をリリースしました。
@@ -360,6 +424,8 @@ Version 1.0.0 のリリース日は、2026年7月14日になります。
 
 ## 関連資料
 
+- [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+- [外字（私用領域）の扱い — SnowStack.EncodingProbe](/encodingprobe_private_use_area/)
 - [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 - [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 - [-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
