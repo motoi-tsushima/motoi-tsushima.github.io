@@ -50,6 +50,7 @@ SnowStack.EncodingProbe が クラスライブラリで、SnowStack.EncodingProb
 | 繁体字と簡体字の取り違えの修正 | 台湾・香港のカルチャーで簡体字を Big5 と、大陸のカルチャーで繁体字を GB18030 と誤判定しなくなりました |
 | 不具合の修正 | ルーマニア語などのテキストで `NullReferenceException` が発生していたのを直しました（1.1.0 から存在した不具合） |
 | 不具合の修正 | `Detect(Stream)` で、UTF.Unknown による判定が機能していなかったのを直しました |
+| 不具合の修正 | .NET 10 用のビルドで、フレンドリ名の無い文字エンコーディング（windows-1252 など）の `PSEncodingName` に `I do not know.` が入っていたのを、null にしました（1.0.0 から存在した不具合） |
 
 **公開 API は変更していません。** クラス構成も、メソッドも、1.1.0 のままです。判定結果が変わるのは、上の表に挙げたケースです。
 
@@ -152,6 +153,8 @@ UTF.Unknown は、BOMの無い UTF-16 と UTF-32 に対応していません。
 同じ仕組みで、繁体字と簡体字の取り違えも直しています。UTF.Unknown が EncodingDetector と反対の系統（Big5 系と GB 系）を信頼度 0.8 以上で返した場合は、その系統で解析をやり直します。
 
 なお、おおむね 90 バイト以下の短いシングルバイト系のテキストでは、UTF.Unknown の精度の限界により、東アジアのカルチャーで誤判定する場合が残っています。
+
+また、シングルバイト系（windows-1252、ISO-8859 など）は、バイト列の構造からは判別できず、文章の統計で推定しています。そのため、判定の成否は長さよりも内容に左右されます。文字の一覧、記号・数字の多い行、その言語で通常使わない文字を含むテキストでは、数百バイトあっても判定できない（`CodePage = -1`）ことがあります。その場合は、呼び出し側でコードページを明示してください。
 
 ##### UTF.Unknown のバージョン
 
@@ -293,7 +296,9 @@ Detect メソッドにより文字エンコーディングを解析した結果�
 | LineBreakType | LineBreak       | 改行コード種類（Windows型、UNIX型） | CrLf , Lf , Cr の、どれかを示す。<br />混合状態も表します。  |
 | string        | Culture         | 国情報                              | 例として、日本=ja-JP, 韓国=ko, 台湾=zh-TW, 中国=zh-CN        |
 
-PSEncodingName の値は、PowerShell 6.2 以降であれば、UsePSName の値に関係無く Get-Content 等の -Encoding で使用できます。PowerShell 6.2 以降は WebName も -Encoding が受け付けるからです。
+PSEncodingName の値は、PowerShell 6.2 以降であれば、UsePSName の値に関係無く Get-Content 等の -Encoding で使用できます。PowerShell 6.2 以降は WebName も -Encoding が受け付けるからです。ただし、PSEncodingName が null の場合（下記）は使用できないので、CodePage を使ってください。
+
+.NET 10 用のビルドでも、UTF.Unknown が判定した windows-1252 / iso-8859-1 / windows-1251 などでは、PSEncodingName は null になります。1.1.0 まではこの場合に `I do not know.` という文字列が入っていましたが、1.2.0 で直しました（1.0.0 から存在した不具合です）。
 
 但し、`UsePSName = False` は「標準コマンドの -Encoding にそのまま渡せる保証はない」という意味の値です。Windows PowerShell 5.1 では実際に渡せない場合があるので、その点は後述します。
 

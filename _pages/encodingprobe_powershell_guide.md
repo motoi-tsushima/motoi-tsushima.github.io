@@ -130,7 +130,7 @@ Resolve-Encoding の出力するプロパティ変数は以下の種類があり
 | CodePage        | 文字エンコーディングのコードページ                           |
 | EncodingWebName | .NET C# の中で使用する文字エンコーディング名称               |
 | PSEncodingName  | PowerShell コマンドレットの -Encoding オプション等に指定する文字エンコーディングのフレンドリ名（PS5.1とPS6.2以降では値が異なります） |
-| UsePSName       | PSEncodingName に有効なフレンドリ名が入っている場合は True に、Web Name や空白が入っている場合は False となります。 |
+| UsePSName       | PSEncodingName に有効なフレンドリ名が入っている場合は True に、Web Name や空白が入っている場合は False となります。False のときは、CodePage で文字エンコーディングを指定してください。 |
 | Bom             | BOMの有無。True = BOM有り、False = BOM無し。                 |
 | LineBreak       | 改行コードの種類。Windows形式 = CrLf 、UNIX形式 = Lf         |
 | Culture         | コマンドが認識したカルチャー情報 (国情報)                    |
@@ -387,6 +387,16 @@ Get-ProbedContent / Set-ProbedContent / Add-ProbedContent は、PowerShell の�
 
 なお、Resolve-Encoding の PSEncodingName と UsePSName の仕様は 1.1.0 でも変更していません。標準コマンドと組み合わせる既存のスクリプトは、そのまま動きます。
 
+1.2.0 では、PowerShell 7.x で windows-1252 や iso-8859-1 のようにフレンドリ名の無い文字エンコーディングを判定したとき、PSEncodingName に `I do not know.` という文字列が入っていた不具合を直しました（1.0.0 から存在した不具合です）。1.2.0 では、この場合の PSEncodingName は空（null）になります。Windows PowerShell 5.1 では、もともと null でした。
+
+UsePSName が False のときは、PSEncodingName ではなく CodePage を使ってください。
+
+```
+# 判定結果のコードページで読む
+$info = Resolve-Encoding .\it1252.txt
+Get-ProbedContent .\it1252.txt -Encoding $info.CodePage
+```
+
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
 ## 使用しているライブラリ
@@ -453,6 +463,12 @@ Out-ProbedFile は、標準の Out-File の代わりに、Windows PowerShell 5.1
 判定処理も改善し、東アジアの環境で欧米の言語のファイルを誤判定する問題と、香港の Big5 の扱いを直しました。ルーマニア語などのファイルで例外が発生する、1.1.0 から存在した不具合も修正しています。
 
 Set-ProbedContent / Add-ProbedContent の -Force が、書き込み後に読み取り専用の属性を元に戻すようになりました（1.1.0 の不具合の修正）。
+
+Set-ProbedContent / Add-ProbedContent の -WhatIf が、読み取り専用のファイルなど、実行すれば失敗することを報告するようになりました。
+
+Resolve-Encoding などが返す PSEncodingName に `I do not know.` という文字列が入る不具合（1.0.0 から存在。PowerShell 7.x のみ）を直しました。
+
+Convert-ProbedContent の -PassThru の結果には、変換元のコードページ番号（SourceCodePage）が含まれます。Unicode 系以外の文字エンコーディングへ元に戻すときは、この番号を -Encoding に渡してください。
 
 また、香港・マカオのカルチャーでも、Get-Help のヘルプとエラーメッセージが繁体字中国語で表示されるようになりました。
 

@@ -28,7 +28,7 @@ SnowStack.EncodingProbe のバージョン 1.2.0 で行った変更の解説で�
 
 [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 
-（この記事に掲載した実行結果は、すべて実機で採取したものです。採取日は 2026年9月28日、環境は Windows 11 上の PowerShell 7.6.6 と Windows PowerShell 5.1.26100 です。バイト列の確認には、1.1.0 の記事で紹介した `Show-Bytes` 関数を使っています）
+（この記事に掲載した実行結果は、すべて実機で採取したものです。採取日は 2026年9月28日（リリース前の最終修正に関する部分は 9月30日）、環境は Windows 11 上の PowerShell 7.6.6 と Windows PowerShell 5.1.26100 です。バイト列の確認には、1.1.0 の記事で紹介した `Show-Bytes` 関数を使っています）
 
 ## 1.2.0 で追加した 2 つのコマンド
 
@@ -298,6 +298,19 @@ $null | Out-ProbedFile .\n2.txt -Encoding utf8BOM  # → 0 バイト
 
 `Set-ProbedContent` では非終了エラーだった「読み取り専用で `-Force` なし」なども、`Out-ProbedFile` では終了エラーになります。基準は同じで、出力先が 1 件か複数かの違いです。
 
+これらのエラーは、`-WhatIf` を付けたときにも報告します。
+
+```
+# 既に存在するファイルへ、-NoClobber と -WhatIf を付けて書き出そうとする
+'x' | Out-ProbedFile .\exists.txt -NoClobber -WhatIf
+```
+
+```
+ファイル '...\exists.txt' は既に存在します。-NoClobber が指定されているため上書きしません。
+```
+
+`-NoClobber`、読み取り専用のファイル、`-EncodingFrom` の参照先の問題など、ファイルを変更せずに確かめられる失敗は、「書き込みます」という `-WhatIf` の表示ではなく、実行したときと同じエラーになります。詳しくは、後の「-WhatIf で、実行すれば失敗することが分かるようにしました」で解説します。
+
 ## Convert-ProbedContent — 既存のファイルを変換する
 
 既存のテキストファイルの**文字エンコーディング・BOM・改行を変換して書き直す**コマンドです。
@@ -338,6 +351,7 @@ Convert-ProbedContent .\sjis.txt -Encoding utf8NoBOM -LineBreak Lf -PassThru
 Path            : C:\work\sjis.txt
 Destination     : C:\work\sjis.txt
 SourceEncoding  : shift_jis
+SourceCodePage  : 932
 Encoding        : utf8NoBOM
 SourceLineBreak : LfAndCrLf
 LineBreak       : Lf
@@ -358,12 +372,62 @@ Changed         : True
 | `Path` | 変換元の絶対パス |
 | `Destination` | 書き込み先の絶対パス（その場での変換は `Path` と同じ） |
 | `SourceEncoding` | 変換元の文字エンコーディング（統一語彙名） |
+| `SourceCodePage` | 変換元のコードページ番号 |
 | `Encoding` | 変換先の文字エンコーディング（統一語彙名） |
 | `SourceLineBreak` | 変換元の改行（混在なら `LfAndCrLf` など） |
 | `LineBreak` | 変換先の改行 |
 | `Changed` | 変換結果が変換元と異なるか |
 
-`SourceEncoding` の名前は、そのまま `-Encoding` に渡せる形になっています。変換を元に戻したいときは、この値を `-Encoding` に指定してください。
+### 変換を元に戻すには、SourceCodePage を使います
+
+`-PassThru` の結果を取っておけば、変換したファイルを元の文字エンコーディングに戻せます。
+
+元に戻すときは、変換元の種類によって、`-Encoding` に渡す値を使い分けてください。
+
+| 変換元 | `-Encoding` に渡すもの |
+| :---- | :---- |
+| Unicode 系（UTF-8 / UTF-16 / UTF-32） | `SourceEncoding`（`utf8BOM` のように、BOM の有無まで表す名前） |
+| それ以外（Shift_JIS / EUC-JP / Big5 / windows-1252 など） | `SourceCodePage` |
+
+```
+# EUC-JP のファイルを UTF-8 に変換して、結果を取っておく
+$r = Convert-ProbedContent .\legacy.txt -Encoding utf8NoBOM -PassThru
+
+# 元の EUC-JP に戻す
+Convert-ProbedContent .\legacy.txt -Encoding $r.SourceCodePage
+```
+
+Unicode 系で `SourceEncoding` を使うのは、コードページ番号では BOM の有無を表せないからです。
+
+では、Unicode 系以外で、なぜ名前（`SourceEncoding`）ではだめなのでしょうか。
+
+実は EUC-JP には、.NET 上で **20932 と 51932 の二つのコードページ**があります。判定結果が 20932 のファイルでも、`SourceEncoding` の名前は `euc-jp` になり、`euc-jp` という名前を渡すと 51932 として扱われます。
+
+この二つは、一部の文字の割り当てが違います。たとえば「〜」（波ダッシュ）は、20932 では U+301C、51932 では U+FF5E（全角チルダ）に対応します。
+
+「受付は 10 時〜12 時です。」という行を含む EUC-JP のファイルを変換すると、次のようになります。
+
+```
+SourceEncoding  : euc-jp
+SourceCodePage  : 20932
+Encoding        : utf8NoBOM
+```
+
+これを名前で戻そうとすると、エラーになります。
+
+```
+# 名前で戻そうとする
+Convert-ProbedContent .\legacy.txt -Encoding $r.SourceEncoding
+```
+
+```
+'...\legacy.txt' の 2 行 9 桁目の文字 U+301C '〜' は文字エンコーディング 'euc-jp' で
+表現できないため、変換しませんでした。ファイルは変更していません。
+```
+
+`Convert-ProbedContent` は文字を失う変換を行わないので（次の節で解説します）、ファイルは壊れずに残ります。しかし、元に戻すこともできません。
+
+番号（`SourceCodePage`）で戻せば、元のファイルと**バイト単位で一致しました。** Windows PowerShell 5.1 でも同じ結果です。
 
 ### 文字を失う変換は、行いません
 
@@ -494,6 +558,10 @@ Changed
 
 `-WhatIf` / `-Confirm` は、ファイルごとに効きます。
 
+`-WhatIf` を付けた場合も、実行すれば失敗するファイル（表現できない文字や不正なバイト列があるもの、読み取り専用のもの、`-Destination` の出力先に同じ名前のファイルがあるものなど）は、実行したときと同じエラーとして報告します。`-WhatIf` の表示が出たファイルは、実際に実行しても、その検査では止まりません。
+
+ただし、`-WhatIf` / `-Confirm` のメッセージは、変換しても内容が変わらず、実際には書き直さないファイルにも表示されます。これは仕様です。`-Confirm` を指定して確認を求めたのに、ファイルによって確認が省かれると、かえって不具合に見えるためです。
+
 ### -Destination で、別のフォルダーへ書き出す
 
 `-Destination` にフォルダーを指定すると、元のファイルはそのまま残し、変換結果をそのフォルダーへ書き出します。
@@ -515,7 +583,7 @@ Get-ChildItem -Filter s2.txt | Convert-ProbedContent -Encoding utf8NoBOM -Destin
 - 出力先のフォルダーは、あらかじめ作っておいてください。存在しない場合はエラーになります（フォルダーは作成しません）
 - `Get-ChildItem -Recurse` から受け取った場合も、**フォルダー構造は保ちません。** すべて `-Destination` の直下に置きます
 - 出力先に同じ名前のファイルがある場合はエラーです。`-Force` を付ければ上書きします
-- 同じ実行の中でファイル名が重なった場合、2 件目以降はエラーになります。`-Force` を付けても上書きしません（同じ実行で書いたファイルを消さないためです）
+- 同じ実行の中でファイル名が重なった場合、2 件目以降はエラーになります。`-Force` を付けても上書きしません（同じ実行で書いたファイルを消さないためです）。この重なりは、`-WhatIf` を付けた場合も報告します
 
 ### 判定を誤るファイルは、-SourceEncoding で指定します
 
@@ -562,7 +630,14 @@ Convert-ProbedContent .\old.txt -SourceEncoding euc-jp -Encoding utf8NoBOM
 
 ## 既存のコマンドの変更
 
-1.1.0 のコマンドの変更は、二つだけです。どちらも、既存のスクリプトの動作を壊す変更ではありません。
+1.1.0 以前からあるコマンドの変更は、以下の四つです。いずれも、既存のスクリプトの動作を壊す変更ではありません。
+
+| 変更 | 対象のコマンド |
+| :---- | :---- |
+| `-Force` の後に、読み取り専用の属性を元に戻す（不具合の修正） | `Set-ProbedContent` / `Add-ProbedContent` |
+| `-LineBreak` の範囲をヘルプに明記（挙動は変更なし） | `Set-ProbedContent` / `Add-ProbedContent` |
+| `-WhatIf` で、実行すれば失敗することを報告する | `Set-ProbedContent` / `Add-ProbedContent` |
+| `PSEncodingName` に `I do not know.` が入らないようにした（不具合の修正） | `Resolve-Encoding` |
 
 ### -Force の後に、読み取り専用の属性を元に戻すようにしました
 
@@ -590,6 +665,86 @@ True
 `Set-ProbedContent` / `Add-ProbedContent` の `-LineBreak` は、要素の後ろに付ける改行だけを決め、文字列の中に含まれる改行は置き換えません。
 
 これは 1.1.0 からの挙動で、変更はしていません。ヘルプに書いていなかったので、5 言語のヘルプに明記しました。
+
+### -WhatIf で、実行すれば失敗することが分かるようにしました
+
+`-WhatIf` は、「実行したら何が起きるか」を確かめるためのパラメータです。
+
+ところが 1.1.0 の `Set-ProbedContent` / `Add-ProbedContent` は、読み取り専用のファイルのように、実行すれば失敗するファイルに対しても、`-WhatIf` では「書き込みます」という表示を出していました。
+
+```
+# 読み取り専用のファイルに、-Force を付けずに -WhatIf で書き込もうとする（1.1.0）
+Set-ProbedContent .\ro.txt -Value 'X' -Encoding utf8NoBOM -WhatIf
+```
+
+```
+What If: ターゲット "...\ro.txt" に対して操作 "Set-ProbedContent" を実行しています。
+```
+
+1.2.0 では、**ファイルを変更せずに確かめられる失敗は、`-WhatIf` のときにも報告します。**
+
+```
+# 同じことを 1.2.0 で行う
+Set-ProbedContent .\ro.txt -Value 'X' -Encoding utf8NoBOM -WhatIf
+```
+
+```
+'...\ro.txt' は読み取り専用です。書き込むには -Force を指定してください。
+読み取り専用の属性は書き込み後に元に戻します。
+```
+
+報告されるエラーは、`-WhatIf` を付けずに実行したときと同じです（エラー ID も同じ `WriteAccessDenied` です）。
+
+| コマンド | `-WhatIf` でも報告するようになったもの |
+| :---- | :---- |
+| `Set-ProbedContent` / `Add-ProbedContent` | 読み取り専用のファイル（`-Force` なし）、書き込み先のフォルダーが無い |
+
+1.2.0 で追加した `Out-ProbedFile` と `Convert-ProbedContent` も、同じ方針で作っています。
+
+なお、エラー ID は 1.1.0 と同じですが、エラーメッセージの文面は変わりました。1.1.0 では .NET の例外の文面（実行環境によって変わります）をそのまま表示していましたが、1.2.0 では、このモジュールの文面（5 言語）で表示します。
+
+### PSEncodingName に「I do not know.」と表示されなくなりました
+
+**これは、1.0.0 から存在した不具合の修正です。**
+
+PowerShell 7.x で、windows-1252 や iso-8859-1 のように、PowerShell のフレンドリ名が無い文字エンコーディングを判定すると、`PSEncodingName` に `I do not know.` という文字列が入っていました。
+
+```
+# windows-1252 のイタリア語のファイルを判定する（1.1.0、PowerShell 7.x）
+Resolve-Encoding .\it1252.txt
+```
+
+```
+CodePage        : 1252
+EncodingWebName : windows-1252
+PSEncodingName  : I do not know.
+UsePSName       : False
+Bom             : False
+LineBreak       : Lf
+Culture         : ja-JP
+```
+
+1.2.0 では、この場合の `PSEncodingName` は**空（null）**になります。`UsePSName` は、従来どおり `False` です。
+
+```
+CodePage        : 1252
+EncodingWebName : windows-1252
+PSEncodingName  : 
+UsePSName       : False
+```
+
+- Windows PowerShell 5.1 では、もともと null でした（変化はありません）
+- Shift_JIS や EUC-JP など、このライブラリが独自に判定する文字エンコーディングの値（PowerShell 7.x の `shift_jis`、`euc-jp` など）は変わりません
+
+`UsePSName` が `False` のときは、`PSEncodingName` ではなく `CodePage` で文字エンコーディングを指定してください。
+
+```
+# 判定結果のコードページで読む
+$info = Resolve-Encoding .\it1252.txt
+Get-ProbedContent .\it1252.txt -Encoding $info.CodePage
+```
+
+この値は、クラスライブラリ（SnowStack.EncodingProbe）の .NET 10 用のビルドが返しているものです。NuGet パッケージを直接使っている場合も、同じく null になります。
 
 ## クラスライブラリ — 判定を、世界の言語に対応させました
 
@@ -732,6 +887,44 @@ windows-1252 のファイルが `iso-8859-1` と判定されるのは UTF.Unknow
 | :---- | :---- |
 | ウクライナ語（windows-1251 / KOI8-U） | UTF.Unknown の信頼度が低く、判定不能になる |
 | ルーマニア語（ISO-8859-16） | UTF.Unknown は判定するが、.NET がこの文字エンコーディングを提供していない |
+
+### シングルバイト系の判定は、長さよりも内容で成否が決まります
+
+上の「90 バイト以下」は、東アジアの文字エンコーディングと誤判定する経路の話です。**数百バイトあれば、どんなテキストでも判定できるという意味ではありません。**
+
+windows-1252（西欧語）や ISO-8859 系のようなシングルバイトの文字エンコーディングは、バイト列の形からは区別できません。同じバイトが、どのコードページとしても「正しい文字」として読めてしまうからです。たとえば `E9` は、windows-1252 では `é`、windows-1251 では `й` です。
+
+そのため、これらは文章の統計（その言語でよく出てくる文字の並び）から推定しています。
+
+統計で推定する以上、**判定できるかどうかは、ファイルの長さよりも内容で決まります。** 文字の一覧、記号や数字の多い行、その言語でふだん使わない文字が多いテキストは、数百バイトあっても判定できない（`CodePage` が `-1`）ことがあります。
+
+イタリア語の windows-1252 のファイルで試した結果です（カルチャーは it-IT と ja-JP のどちらでも同じ結果でした）。
+
+| 内容 | 大きさ | 判定結果 |
+| :---- | :---- | :---- |
+| 普通の文章の行に加えて、アクセント付き文字の一覧の行（`à è é ì í î ò ó ù ú « » °`）と、記号・数字の行（`Prezzo: 1.234,56 € — vecchio: 2.400.000 Lit.`）を含む | 197 バイト | 判定できない（`-1`） |
+| 上から、一覧の行と、記号・数字の行を除いた普通の文章 | 108 バイト | `28591 / iso-8859-1`（正しい） |
+| さらに `Prezzo: 1.234,56 € — .` の行を足したもの | 131 バイト | `1252 / windows-1252`（正しい） |
+
+一番長いファイルだけが、判定できませんでした。
+
+2 行目の `iso-8859-1` も誤りではありません。このファイルには、windows-1252 と iso-8859-1 で読み方が違うバイト（`80`〜`9F`）が含まれていないので、どちらで読んでも同じ文字列になります。`€`（windows-1252 では `80`）を含む 3 行目は、`windows-1252` と判定されています。
+
+判定できなかった場合は、コードページを明示して読み書きしてください。
+
+```
+# コードページ 1252 を明示して読む
+Get-ProbedContent .\italian.txt -Encoding 1252
+
+# 変換元のコードページを明示して、UTF-8 に変換する
+Convert-ProbedContent .\italian.txt -SourceEncoding 1252 -Encoding utf8NoBOM
+```
+
+判定できないときに、あてずっぽうで特定の文字エンコーディングを返すことはしません。外れたときに、エラーにならないまま文字化けしたファイルができてしまうからです。判定できなければ、エラーにして明示を求めます。
+
+実行環境の言語（カルチャー）から、シングルバイトの文字エンコーディングを推定する方法は、1.3.0 以降で検討しています。
+
+この内容は、判定を行う 6 つのコマンド（`Resolve-Encoding` / `Get-ProbedContent` / `Set-ProbedContent` / `Add-ProbedContent` / `Out-ProbedFile` / `Convert-ProbedContent`）のヘルプ（`Get-Help <コマンド名> -Full` の NOTES）にも、5 言語で記載しています。
 
 ### ルーマニア語で例外が出る不具合を直しました
 
@@ -905,6 +1098,8 @@ HKSCS の固有の文字が入った文書では、UTF.Unknown が系統を判�
 
 `Detect(byte[])` と `Detect(string filePath)` には、この問題はありません。PowerShell のコマンドレットは、この二つしか使っていないので、影響を受けていません。
 
+また、.NET 10 用のビルドで、`EncodingInformation.PSEncodingName` に `I do not know.` という文字列が入る不具合も直しました（1.0.0 から存在した不具合です）。UTF.Unknown が windows-1252 / iso-8859-1 / windows-1251 などを答えた場合に起きていました。1.2.0 では、この場合の `PSEncodingName` は null になります。.NET Framework 4.8 用のビルドは、もともと null でした。
+
 1.1.0 のときとは違い、**今回はクラスライブラリの判定処理を改修しているので、1.2.0 への更新をお勧めします。**
 
 ## 1.2.0 でも解決していないこと
@@ -916,6 +1111,7 @@ HKSCS の固有の文字が入った文書では、UTF.Unknown が系統を判�
 | ISO-2022-TW が ISO-2022-CN と誤判定される | 未対応 |
 | SO/SI 形式の 1 バイトカナを検出できない | 未対応 |
 | 短いシングルバイト系のテキストを、東アジアのカルチャーで誤判定する | UTF.Unknown の限界のため未対応 |
+| 文字の一覧や記号の多いシングルバイト系のテキストを、判定できない（`-1`） | 未対応（カルチャーからの推定を 1.3.0 以降で検討中） |
 | 大陸のカルチャーで、HKSCS 入りの Big5 を GB18030 と判定する | 未対応 |
 
 該当する文字エンコーディングを確実に扱いたい場合は、`-Encoding` で明示的に指定してください。判定を行わないので、これらの問題を回避できます。
@@ -936,6 +1132,8 @@ HKSCS の固有の文字が入った文書では、UTF.Unknown が系統を判�
 | 元のファイルを残して変換する | `-Destination .\out` を付ける |
 | 変換前に対象を確認する | `-WhatIf` を付ける |
 | 変換の結果を確認する | `-PassThru` を付ける |
+| 変換を元に戻す（Unicode 系以外） | `Convert-ProbedContent .\a.txt -Encoding $r.SourceCodePage`（`$r` は `-PassThru` の結果） |
+| 変換を元に戻す（Unicode 系） | `Convert-ProbedContent .\a.txt -Encoding $r.SourceEncoding` |
 | 変換元の判定を誤るファイルを変換する | `-SourceEncoding euc-jp` などを付ける |
 | 香港の Big5 を読む | `Get-ProbedContent .\a.txt -Culture zh-HK` |
 
@@ -950,6 +1148,8 @@ Version 1.2.0 をリリースしました。
 PowerShell モジュールに `Out-ProbedFile` / `Convert-ProbedContent` の 2 コマンドを追加し、クラスライブラリの判定処理を改修しています。
 
 既存のコマンドのパラメータと、クラスライブラリの公開 API は変更していないので、1.1.0 向けに書いたスクリプトやプログラムはそのまま動きます。ただし、この記事で解説したケースでは、判定結果が 1.1.0 と変わります。
+
+あわせて、`PSEncodingName` に `I do not know.` が入る不具合（1.0.0 から存在）を修正し、`Set-ProbedContent` / `Add-ProbedContent` の `-WhatIf` が、読み取り専用のファイルなど実行すれば失敗することを報告するようにしました。
 
 ## 関連資料
 
