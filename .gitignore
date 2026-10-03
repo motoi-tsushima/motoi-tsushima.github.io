@@ -1,4 +1,6 @@
 _site/
+_docs/
 .jekyll-cache/
 *~
 *.un~
+claude.md
