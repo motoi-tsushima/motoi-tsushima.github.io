@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_1_3_0/
 author_profile: true
 ---
-（リリース日） document update
+2026/10/31 document update
 
 SnowStack.EncodingProbe のバージョン 1.3.0 で行った変更の解説です。
 
@@ -807,7 +807,7 @@ CSV の読み書きの処理には、PowerShell（[PowerShell/PowerShell](https:
 
 ## お知らせ欄
 
-### （リリース日）　Version 1.3.0 リリース
+### 2026年10月31日　Version 1.3.0 リリース
 
 Version 1.3.0 をリリースしました。PowerShell モジュールに CSV の読み書きコマンド（`Import-ProbedCsv` / `Export-ProbedCsv`）と `-DetectionLineCount` を追加し、書き込みで文字を失わないようにしました。NuGet パッケージも、判定処理の不具合を直して 1.3.0 にしています。
 

@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_private_use_area/
 author_profile: true
 ---
-（リリース日） document update
+2026/10/31 document update
 
 SnowStack.EncodingProbe が、**外字**をどう扱うかの解説です。
 

@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_probed_content/
 author_profile: true
 ---
-（リリース日） document update
+2026/10/31 document update
 
 SnowStack.EncodingProbe.PowerShell のバージョン 1.1.0 で追加した、4 つのコマンドレットの解説です。
 

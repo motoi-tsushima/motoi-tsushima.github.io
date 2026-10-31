@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
 ---
-（リリース日） document update
+2026/10/31 document update
 
 SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を解説します。
 
@@ -13,7 +13,7 @@ SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を
 
 2026年9月30日に Version 1.2.0 をリリースし、ファイルへの出力と変換を行う 2 つのコマンドレットを追加しました。あわせて、東アジア以外の言語と、香港の Big5 の判定を改善しています。
 
-（リリース日）に Version 1.3.0 をリリースし、CSV の読み書きを行う 2 つのコマンドレットと、先頭の行だけで判定する `-DetectionLineCount` を追加しました。あわせて、書き込み先で表現できない文字を `?` にせずエラーにするなど、既存のコマンドの挙動を改めています。
+2026年10月31日に Version 1.3.0 をリリースし、CSV の読み書きを行う 2 つのコマンドレットと、先頭の行だけで判定する `-DetectionLineCount` を追加しました。あわせて、書き込み先で表現できない文字を `?` にせずエラーにするなど、既存のコマンドの挙動を改めています。
 
 追加分の解説は分量があるので、以下の別記事に分けています。この記事では、インストール方法と 1.0.x から提供しているコマンドレットを扱います。
 
@@ -531,7 +531,7 @@ Resolve-Encoding -License
 
 ## お知らせ関連
 
-### （リリース日）　Version 1.3.0 リリース
+### 2026年10月31日　Version 1.3.0 リリース
 
 Version 1.3.0 をリリースしました。
 

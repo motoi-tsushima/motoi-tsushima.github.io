@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_guide/
 author_profile: true
 ---
-（リリース日） document update
+2026/10/31 document update
 
 ## EncodingProbe とは
 
@@ -34,7 +34,7 @@ SnowStack.EncodingProbe が クラスライブラリで、SnowStack.EncodingProb
 2026年6月6日に最初の preview1 をリリースし、何度か改修版のプレリリースを行った後、
 2026年7月14日に正式版の Version 1.0.0 をリリースしました。
 
-その後、2026年9月1日に Version 1.1.0 を、2026年9月30日に Version 1.2.0 を、（リリース日）に Version 1.3.0 をリリースしています。
+その後、2026年9月1日に Version 1.1.0 を、2026年9月30日に Version 1.2.0 を、2026年10月31日に Version 1.3.0 をリリースしています。
 
 ### Version 1.3.0
 
@@ -417,7 +417,7 @@ PowerShell コマンドレットの CSV の処理に含めた PowerShell のコ�
 
 ## お知らせ欄
 
-### （リリース日）　Version 1.3.0 リリース
+### 2026年10月31日　Version 1.3.0 リリース
 
 Version 1.3.0 をリリースしました。
 

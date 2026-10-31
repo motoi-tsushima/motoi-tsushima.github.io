@@ -16,7 +16,7 @@ tags:
   - NuGet package
 ---
 
-（リリース日）に SnowStack.EncodingProbe.PowerShell のバージョン 1.3.0 のリリースを開始したことを、ご報告します。
+2026年10月31日に SnowStack.EncodingProbe.PowerShell のバージョン 1.3.0 のリリースを開始したことを、ご報告します。
 
 ## 何が新しくなったか
 

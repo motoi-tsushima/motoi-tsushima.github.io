@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_1_2_0/
 author_profile: true
 ---
-（リリース日） document update
+2026/10/31 document update
 
 SnowStack.EncodingProbe のバージョン 1.2.0 で行った変更の解説です。
 
