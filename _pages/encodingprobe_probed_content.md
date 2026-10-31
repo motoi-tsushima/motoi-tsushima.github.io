@@ -935,7 +935,7 @@ https://www.mozilla.org/MPL/1.1/
 
 （上の表記は 1.3.0 のものです。1.3.0 で、著作権の表記を `Copyright (c) 2026 Motoi Tsushima` にそろえ、CSV の読み書きの処理に含めた PowerShell のコード（MIT License）の表示を加えました。PowerShell のコードは、1.3.0 で追加した `Import-ProbedCsv` / `Export-ProbedCsv` のためのもので、1.1.0 の 4 つのコマンドには関係しません）
 
-同じ文面は、コマンドからも取得できます。
+ライセンスの情報は、コマンドからも取得できます。
 
 ```
 # ライセンス情報を表示する
