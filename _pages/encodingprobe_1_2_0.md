@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_1_2_0/
 author_profile: true
 ---
-2026/09/30 document update
+（リリース日） document update
 
 SnowStack.EncodingProbe のバージョン 1.2.0 で行った変更の解説です。
 
@@ -29,6 +29,11 @@ SnowStack.EncodingProbe のバージョン 1.2.0 で行った変更の解説で�
 [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 
 （この記事に掲載した実行結果は、すべて実機で採取したものです。採取日は 2026年9月28日（リリース前の最終修正に関する部分は 9月30日）、環境は Windows 11 上の PowerShell 7.6.6 と Windows PowerShell 5.1.26100 です。バイト列の確認には、1.1.0 の記事で紹介した `Show-Bytes` 関数を使っています）
+
+**この記事は、1.2.0 の時点の記録です。** 1.3.0 で、この記事のコマンドの挙動が一部変わりました（表現できない文字のエラー、追記の整合性検査で止まった場合の扱い、読み込み中のファイルへの上書きの検出、上書きの書き方など）。本文は 1.2.0 のまま残し、1.3.0 で結果が変わる主な箇所の直後に「※1.3.0 では」の注記を付けています。1.3.0 の変更の全体は、以下の記事で解説しています。
+{: .notice--info}
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ## 1.2.0 で追加した 2 つのコマンド
 
@@ -201,6 +206,9 @@ Show-Bytes .\sj.txt
 
 検査は 1 行ずつ、書き込む前に行います。途中の行で不一致を検出した場合は、その手前の行までが書かれて止まります。書かれた行は比較が成立した行だけなので、ファイルが二つの文字エンコーディングで混ざることはありません。
 
+※1.3.0 では、途中の行で不一致を検出した場合も、その呼び出しで書いた行をすべて取り消して、追記の前の状態に戻します（`Add-ProbedContent`・`Export-ProbedCsv -Append` も同じです）。また、追記先から継承した文字エンコーディングが `us-ascii` の場合は、BOM 無しの UTF-8 とみなします。
+{: .notice--info}
+
 バイト列比較の考え方は、1.1.0 の記事の「整合性検査はバイト列で判定します」で解説しています。
 
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
@@ -232,6 +240,9 @@ $text = Get-ProbedContent <path> -Raw のように、いったん変数に受け
 ```
 
 エラー ID は、1.1.0 の `Set-ProbedContent` と同じ `SamePathRoundTrip` です。r.txt は元のまま残ります。
+
+※1.2.0 は、同じファイルかどうかをパスの文字列で比べるので、ハードリンクやシンボリックリンクなどで書き方を変えると検出をすり抜け、読み込み中のファイルが切り詰められます。`Get-ProbedContent .\a.txt, .\z.txt | Out-ProbedFile .\z.txt` のように、書き込み先を後から読む場合も、z.txt の元の内容が消えます。1.3.0 では、ファイルの実体で比べて、どちらの場合も `SamePathRoundTrip` で止め、ファイルを元のままにします（Linux / macOS のハードリンクと、大文字・小文字だけが違う名前を除きます）。
+{: .notice--info}
 
 ### -LineBreak が決めるのは、行の後ろに付ける改行だけです
 
@@ -449,6 +460,9 @@ Convert-ProbedContent .\k.txt -Encoding shift_jis
 
 Shift_JIS にはハングルがありません。.NET の既定の動作では、このような文字は黙って `?` に置き換えられます。`Convert-ProbedContent` は置き換えずに止まり、**最初に表現できなかった文字と、その行・桁**を示します。
 
+※1.2.0 の `Set-ProbedContent`・`Add-ProbedContent`・`Out-ProbedFile` は、.NET の既定の動作に従って `?` にして書きます。1.3.0 では、これらと `Export-ProbedCsv` も、`Convert-ProbedContent` と同じく表現できない文字をエラー（`UnrepresentableCharacter`）にして、ファイルを元のままにします。
+{: .notice--info}
+
 二つ目は、変換元に、その文字エンコーディングとして不正なバイト列がある場合です。
 
 ```
@@ -537,6 +551,9 @@ Convert-ProbedContent .\s.txt -Encoding utf8 -Bom Add
 その場で変換する場合は、**同じフォルダーに一時ファイルを書いてから、元のファイルと置き換えます。**
 
 変換の途中で失敗しても、元のファイルは壊れません。失敗したときは、一時ファイルも削除します。
+
+※1.3.0 では、変換の結果と元のファイルがどちらも 1 MiB 以内なら、一時ファイルを使わず、元のファイルの中身をメモリに写してから直接書きます（失敗したら写しから書き戻します）。1 MiB を超える場合は、今までどおり一時ファイルで置き換えます。シンボリックリンクはリンクの先の実体を書き換え、Windows ではハードリンクを切りません。一時ファイルの名前は `.~probed<8 桁の 16 進>.probedtmp` になりました。1.2.0 は大きさによらず置き換えるので、Linux / macOS では小さなファイルでもハードリンクが切れ、ACL・拡張属性・アクセス権（モード）・macOS の hidden フラグを失います。
+{: .notice--info}
 
 また、**変換結果が元のバイト列とまったく同じなら、書き直しません。**
 
@@ -924,6 +941,9 @@ Convert-ProbedContent .\italian.txt -SourceEncoding 1252 -Encoding utf8NoBOM
 
 実行環境の言語（カルチャー）から、シングルバイトの文字エンコーディングを推定する方法は、1.3.0 以降で検討しています。
 
+※1.3.0 でも、この推定は行っていません。判定できない場合は、今までどおりコードページを明示してください。
+{: .notice--info}
+
 この内容は、判定を行う 6 つのコマンド（`Resolve-Encoding` / `Get-ProbedContent` / `Set-ProbedContent` / `Add-ProbedContent` / `Out-ProbedFile` / `Convert-ProbedContent`）のヘルプ（`Get-Help <コマンド名> -Full` の NOTES）にも、5 言語で記載しています。
 
 ### ルーマニア語で例外が出る不具合を直しました
@@ -1113,6 +1133,9 @@ HKSCS の固有の文字が入った文書では、UTF.Unknown が系統を判�
 | 短いシングルバイト系のテキストを、東アジアのカルチャーで誤判定する | UTF.Unknown の限界のため未対応 |
 | 文字の一覧や記号の多いシングルバイト系のテキストを、判定できない（`-1`） | 未対応（カルチャーからの推定を 1.3.0 以降で検討中） |
 | 大陸のカルチャーで、HKSCS 入りの Big5 を GB18030 と判定する | 未対応 |
+
+※1.3.0 でも、上の表の項目は変わっていません。1.3.0 で残っている課題は、[1.3.0 の記事](/encodingprobe_1_3_0/#130-でも解決していないこと)にまとめています。
+{: .notice--info}
 
 該当する文字エンコーディングを確実に扱いたい場合は、`-Encoding` で明示的に指定してください。判定を行わないので、これらの問題を回避できます。
 

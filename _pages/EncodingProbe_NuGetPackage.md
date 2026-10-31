@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_guide/
 author_profile: true
 ---
-2026/09/30 document update
+（リリース日） document update
 
 ## EncodingProbe とは
 
@@ -34,7 +34,29 @@ SnowStack.EncodingProbe が クラスライブラリで、SnowStack.EncodingProb
 2026年6月6日に最初の preview1 をリリースし、何度か改修版のプレリリースを行った後、
 2026年7月14日に正式版の Version 1.0.0 をリリースしました。
 
-その後、2026年9月1日に Version 1.1.0 を、2026年9月30日に Version 1.2.0 をリリースしています。
+その後、2026年9月1日に Version 1.1.0 を、2026年9月30日に Version 1.2.0 を、（リリース日）に Version 1.3.0 をリリースしています。
+
+### Version 1.3.0
+
+**1.3.0 では、この NuGet パッケージの判定処理の不具合を 3 件直しました。** 公開 API（型・メソッド・プロパティ、引数と戻り値の型）は変更していません。1.2.0 以前を使用中の方は、1.3.0 への更新をお勧めします。
+
+主な変更は以下のとおりです。
+
+| 変更 | 内容 |
+| :---- | :---- |
+| 不具合の修正 | BOM 無しの UTF-16 / UTF-32 で英数字だけのテキストが、`us-ascii` と判定されていたのを直しました（1.0.0 から存在した不具合）。ただし、2 バイトとも `0x80` 未満になる文字（「上」U+4E0A など）が英数字に混じるものは、従来どおり `us-ascii` です |
+| 不具合の修正 | UTF-16 / UTF-32 と判定したときの `LineBreak` を、その単位（2 / 4 バイト）で数えるようにしました。「上」（UTF-16LE で `0A 4E`）などのバイトを改行と数え、改行が混在していると報告していました（1.0.0 から存在した不具合）。公開の `EncodingDetector.DetectLineBreak()` は、従来どおりバイト単位で数えます |
+| 不具合の修正 | 短い EUC-JP の日本語を、日本語のカルチャーで Shift_JIS と判定していたのを直しました。バイト列だけでは区別できない組み合わせ（EUC-JP と Shift_JIS、EUC-KR と CP949、EUC-TW と CP950）で、そのバイト列を厳密に復号できない候補を選びません |
+| カルチャー名の検証 | `EncodingDetectorOptions.Culture` を受け付けるかどうかを、`CultureInfo` で作れるかどうかではなく、名前の形（BCP 47）で決めます。**`ArgumentException` になる名前の集合が変わります**（.NET 10 用と .NET Framework 4.8 用のビルドでそろいます）。`C`・`root`・`POSIX` は受け付けません。言語の直後の拡張言語は言語として扱います（`zh-yue` は広東語） |
+| `PlatformInformation.Locale` | `AnsiCodePage` / `OemCodePage` を、Windows ではシステムのロケールの値（`GetACP` / `GetOEMCP`）にしました。1.2.0 までは、スレッドのカルチャーの値でした。Windows 以外は、今までどおり現在のカルチャーの値です |
+| `PlatformInformation.Os.Description` | 前後の空白を除きました（.NET Framework の値の末尾に空白が付いていました） |
+| ライセンス | `EncodingProbe.License` の MIT License の本文の抜け（`THE USE OR`）を直し、著作権の表記を `Copyright (c) 2026 Motoi Tsushima` にそろえました |
+
+判定結果が変わるのは、上の表に挙げたケースです。
+
+変更の詳しい内容は、以下の記事で解説しています（PowerShell コマンドレットの変更も含みます）。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ### Version 1.2.0
 
@@ -230,7 +252,7 @@ EncodingDetectorOptions の中のパラメータ・プロパティは以下の�
 | プロパティ | パラメータの機能                                             |
 | ---------- | ------------------------------------------------------------ |
 | Strategy   | 解析手順を選択する。<br />DetectionStrategy 列挙型で指定され、デフォルトではCombinedに設定される。 |
-| Culture    | 解析の基準となる言語(国)を指定する。デフォルトではOSのカルチャーに設定される。 |
+| Culture    | 解析の基準となる言語(国)を指定する。デフォルトではOSのカルチャーに設定される。<br />1.3.0 からは、名前の形（BCP 47）として正しくない名前（`C`・`root` など）を指定すると `ArgumentException` になる。 |
 
 DetectionStrategy 列挙型では、文字エンコーディングの解析方針を選択できるようにしています。
 
@@ -376,20 +398,33 @@ text1.txt EncodingInformation { CodePage = 1200, EncodingWebName = utf-16, PSEnc
 This software includes the following third-party components:
 
 SnowStack.EncodingProbe
-Copyright c 2026 motoi.tsushima
+Copyright (c) 2026 Motoi Tsushima
 Licensed under MIT License
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_guide/
 
 UTF.Unknown 2.7.0 (net10.0 build) / 2.6.0 (net48 build)
-Copyright (c) 2018 Nikolay Pultsin
 Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
 (This software uses UTF.Unknown under the terms of MPL 1.1)
 https://github.com/CharsetDetector/UTF-unknown
 https://www.mozilla.org/MPL/1.1/
 ```
 
+1.3.0 で、著作権の表記を `Copyright (c) 2026 Motoi Tsushima` にそろえました。ライセンスの全文は、リポジトリの `LICENSE.txt` と `THIRD-PARTY-NOTICES.txt` にあり、`EncodingProbe.License` からも取得できます。
+
+PowerShell コマンドレットの CSV の処理に含めた PowerShell のコード（MIT License）は、この NuGet パッケージには含まれません。
+
 ## お知らせ欄
+
+### （リリース日）　Version 1.3.0 リリース
+
+Version 1.3.0 をリリースしました。
+
+公開 API は変更していません。BOM 無しの UTF-16 / UTF-32 の判定、UTF-16 / UTF-32 の改行コードの数え方、短い EUC-JP の判定の不具合を直しました。カルチャー名の検証と、`PlatformInformation.Locale` の ANSI / OEM コードページも改めています。
+
+1.2.0 以前をご利用中の方は、1.3.0 への更新をお勧めします。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ### 2026年9月30日　Version 1.2.0 リリース
 
@@ -429,6 +464,7 @@ Version 1.0.0 のリリース日は、2026年7月14日になります。
 
 ## 関連資料
 
+- [SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 - [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 - [外字（私用領域）の扱い — SnowStack.EncodingProbe](/encodingprobe_private_use_area/)
 - [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)

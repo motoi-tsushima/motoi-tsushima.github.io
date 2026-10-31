@@ -63,6 +63,10 @@ SnowStack.EncodingProbe.PowerShell コマンドパッケージのインストー
 
 [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 
+1.3.0 では、CSV ファイルを読み書きする Import-ProbedCsv と Export-ProbedCsv、先頭の行だけで判定する -DetectionLineCount を追加しました。書き込み先で表現できない文字を `?` にせずエラーにするなど、既存のコマンドの挙動も改めています。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
+
 外国語のテキストファイルを扱う場合は、-Culture と -Strategy の二つのオプションの解説もご覧ください。
 
 [-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)

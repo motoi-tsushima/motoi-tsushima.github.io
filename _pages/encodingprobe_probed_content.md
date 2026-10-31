@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_probed_content/
 author_profile: true
 ---
-2026/09/30 document update
+（リリース日） document update
 
 SnowStack.EncodingProbe.PowerShell のバージョン 1.1.0 で追加した、4 つのコマンドレットの解説です。
 
@@ -24,6 +24,11 @@ SnowStack.EncodingProbe.PowerShell のバージョン 1.1.0 で追加した、4 
 [-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
 
 （この記事に掲載した実行結果は、すべて実機で採取したものです。採取日は 2026年8月31日、環境は Windows 11 上の PowerShell 7.6.5 と Windows PowerShell 5.1.26100 です）
+
+**1.3.0 で、この記事の 4 つのコマンドの挙動が一部変わりました。** 書き込み先で表現できない文字を `?` にせずエラーにすること、英数字だけのファイル（`us-ascii`）に追記すると UTF-8 で書くこと、`Get-ChildItem` から渡したファイルの名前に `[ ]` があってもワイルドカードとして展開しないことなどです。この記事の本文は 1.1.0 の時点のもので、結果が変わる追記の整合性検査の表には、1.3.0 の注記を付けています。変更の全体は、以下の記事で解説しています。
+{: .notice--info}
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ## 同じ Set-Content が、PowerShell のバージョンで違うバイト列を書く
 
@@ -554,7 +559,7 @@ PowerShell 7.x の標準の `Set-Content` も同じ挙動なので、標準コ�
 
 | 既存ファイル | 追記の指定 | 追記する内容 | 判定 |
 | :---- | :---- | :---- | :---- |
-| US-ASCII | UTF-8 | 日本語を含む | 拒否 |
+| US-ASCII | UTF-8 | 日本語を含む | 拒否（**1.3.0 からは許可**。下記） |
 | UTF-8 | US-ASCII | ASCII のみ | 許可 |
 | UTF-8 | Shift_JIS | ASCII のみ | 許可 |
 | UTF-8 | Shift_JIS | 日本語を含む | 拒否 |
@@ -566,6 +571,9 @@ PowerShell 7.x の標準の `Set-Content` も同じ挙動なので、標準コ�
 しかし、追記する内容が ASCII の範囲だけなら、UTF-8 で符号化しても Shift_JIS で符号化しても、出てくるバイト列は同じです。ファイルは壊れません。
 
 逆に、既存ファイルが US-ASCII だからといって UTF-8 の日本語を黙って追記すれば、**ファイル全体の文字エンコーディングが UTF-8 に変わります。** それは `Add-` の役割を超えています。
+
+※1.3.0 では、この行の扱いを改めました。**判定や継承で得た US-ASCII は、BOM 無しの UTF-8 とみなします。** US-ASCII と判定されるのはすべてのバイトが `0x80` 未満のファイルで、それは BOM 無しの UTF-8 としても正しいからです。英数字だけのログに `-Encoding` を付けずに日本語を追記すると UTF-8 で書き、`-Encoding utf8NoBOM`（または `utf8BOM`）を明示した追記も許可します。1.2.0 までは、前者は日本語を `?` にして書き、後者は拒否していました。`-Encoding ascii` を明示して日本語を書いた場合は、1.3.0 ではエラー（`UnrepresentableCharacter`）です。
+{: .notice--info}
 
 実際に動かすと、以下のようになります。
 
@@ -900,25 +908,31 @@ MPL 1.1 は Mozilla Public License 1.1 の略で、ファイル単位の弱い�
 
 ```
 SnowStack.EncodingProbe.PowerShell is licensed under MIT License.
-Copyright c 2026 motoi.tsushima
+Copyright (c) 2026 Motoi Tsushima
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_powershell_guide/
 
 This software includes the following third-party components:
 
 SnowStack.EncodingProbe
-Copyright c 2026 motoi.tsushima
+Copyright (c) 2026 Motoi Tsushima
 Licensed under MIT License
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_guide/
 
+PowerShell (portions of the CSV import/export implementation)
+Copyright (c) Microsoft Corporation.
+Licensed under MIT License
+https://github.com/PowerShell/PowerShell
+
 UTF.Unknown 2.7.0 (net10.0 build) / 2.6.0 (net48 build)
-Copyright (c) 2018 Nikolay Pultsin
 Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
 (This software uses UTF.Unknown under the terms of MPL 1.1)
 https://github.com/CharsetDetector/UTF-unknown
 https://www.mozilla.org/MPL/1.1/
 ```
+
+（上の表記は 1.3.0 のものです。1.3.0 で、著作権の表記を `Copyright (c) 2026 Motoi Tsushima` にそろえ、CSV の読み書きの処理に含めた PowerShell のコード（MIT License）の表示を加えました。PowerShell のコードは、1.3.0 で追加した `Import-ProbedCsv` / `Export-ProbedCsv` のためのもので、1.1.0 の 4 つのコマンドには関係しません）
 
 同じ文面は、コマンドからも取得できます。
 
@@ -939,7 +953,7 @@ ISO-2022 系の判定には、まだ問題が残っています。
 | SO/SI 形式の 1 バイトカナを検出できない | 未対応 |
 | 判定できても .NET が扱えないコードページがある | 1.1.0 で非終了エラーとして報告する対応を実施 |
 
-いずれも判定エンジン側の課題です。1.2.0 以降で扱う予定でしたが、1.2.0 では対応していません（1.2.0 では、世界の言語と香港の Big5 への対応を優先しました）。
+いずれも判定エンジン側の課題です。1.2.0 以降で扱う予定でしたが、1.2.0 では対応していません（1.2.0 では、世界の言語と香港の Big5 への対応を優先しました）。1.3.0 でも対応していません。
 
 該当する文字エンコーディングを確実に扱いたい場合は、`-Encoding` で明示的に指定してください。判定を行わないので、この問題を回避できます。
 
@@ -981,6 +995,7 @@ Version 1.1.0 をリリースしました。
 
 ## 関連資料
 
+- [SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 - [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 - [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 - [SnowStack.EncodingProbe NuGet Package 解説](/encodingprobe_guide/)

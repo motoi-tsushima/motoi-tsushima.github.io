@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_powershell_guide/
 author_profile: true
 ---
-2026/09/30 document update
+（リリース日） document update
 
 SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を解説します。
 
@@ -13,11 +13,15 @@ SnowStack.EncodingProbe.PowerShell のインストール方法と、使い方を
 
 2026年9月30日に Version 1.2.0 をリリースし、ファイルへの出力と変換を行う 2 つのコマンドレットを追加しました。あわせて、東アジア以外の言語と、香港の Big5 の判定を改善しています。
 
+（リリース日）に Version 1.3.0 をリリースし、CSV の読み書きを行う 2 つのコマンドレットと、先頭の行だけで判定する `-DetectionLineCount` を追加しました。あわせて、書き込み先で表現できない文字を `?` にせずエラーにするなど、既存のコマンドの挙動を改めています。
+
 追加分の解説は分量があるので、以下の別記事に分けています。この記事では、インストール方法と 1.0.x から提供しているコマンドレットを扱います。
 
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
 [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ## インストール方法
 
@@ -78,7 +82,7 @@ Uninstall-PSResource SnowStack.EncodingProbe.PowerShell
 
 ## SnowStack.EncodingProbe.PowerShell の使い方
 
-現在、SnowStack.EncodingProbe.PowerShell パッケージの中には、八つのコマンドレットが含まれています。
+現在、SnowStack.EncodingProbe.PowerShell パッケージの中には、十のコマンドレットが含まれています。
 
 | コマンドレット | 役割 | 追加バージョン |
 | :---- | :---- | :---- |
@@ -90,6 +94,8 @@ Uninstall-PSResource SnowStack.EncodingProbe.PowerShell
 | `ConvertTo-DotNetEncoding` | 各種の指定を `System.Text.Encoding` に変換する | 1.1.0 |
 | `Out-ProbedFile` | オブジェクトを整形して、文字エンコーディングを指定してファイルに書き出す | 1.2.0 |
 | `Convert-ProbedContent` | 既存のファイルの文字エンコーディング・BOM・改行を変換する | 1.2.0 |
+| `Import-ProbedCsv` | 文字エンコーディングを判定して CSV ファイルを読み込む | 1.3.0 |
+| `Export-ProbedCsv` | 文字エンコーディング・BOM・改行を指定して CSV ファイルに書き出す | 1.3.0 |
 
 この記事では、上の二つを解説します。
 
@@ -102,6 +108,12 @@ Uninstall-PSResource SnowStack.EncodingProbe.PowerShell
 [SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](/encodingprobe_1_2_0/)
 
 1.2.0 では、`Resolve-Encoding` のパラメータと戻り値は変更していません。ただし、内部で使っている判定処理を改善したので、東アジアの環境で欧米の言語のファイルを判定した場合などに、判定結果が 1.1.0 と変わります。詳しくは上の 1.2.0 の記事をご覧ください。
+
+1.3.0 で追加した二つのコマンドレットも、同じ文字エンコーディング名の体系を使います。こちらは以下の別記事で解説しています。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
+
+1.3.0 では、`Resolve-Encoding` に `-DetectionLineCount` を追加しました（後述）。既存のパラメータと戻り値は変更していませんが、判定処理の不具合を直したので、BOM 無しの UTF-16 / UTF-32 のファイルなどで、判定結果が 1.2.0 と変わります。
 
 ### Resolve-Encoding
 
@@ -205,17 +217,33 @@ UTF.Unknown は欧米などのシングルバイト文字エンコーディン�
 
 1.2.0 からは、香港・マカオのカルチャー（`zh-HK` / `zh-MO`）と広東語（`yue`）を、台湾とは分けて扱うようになりました。また、`zh-Hant-HK` のような用字を含むカルチャー名も、正しく解釈します。
 
+1.3.0 からは、受け付けるカルチャー名を名前の形（BCP 47）で決めるので、Windows PowerShell 5.1 と PowerShell 7.x で同じになります。`-Culture C` や `-Culture root` は、両方でエラー（`InvalidCulture`）です。名前の前後の空白は無視します。解釈できない `-Strategy` / `-Culture` のエラーも、ほかのコマンドと同じ `InvalidStrategy` / `InvalidCulture` になりました。
+
 もし使う必要が出てきた場合は、以下の記事で具体例を示して解説しています。日本語環境で韓国語のファイルを読むと、どう文字化けするかの実測値を載せています。
 
 [-Culture と -Strategy の解説 — 外国語のテキストファイルを読む](/encodingprobe_culture_strategy/)
+
+##### -DetectionLineCount
+
+1.3.0 で追加したオプションです。ファイル全体ではなく、**先頭の N 行だけで**文字エンコーディングを推測します。巨大なファイルを速く推測したいときに使います。
+
+```
+Resolve-Encoding huge.csv -DetectionLineCount 1000
+```
+
+N は物理的な行の数（改行で数えた行の数）です。結果は先頭 N 行だけを見たものなので、後半にだけ現れる文字は反映されません。たとえば、先頭が英数字だけで後半に日本語がある Shift_JIS のファイルは、`us-ascii` と報告します。改行コードの種類（LineBreak）も、先頭 N 行だけで判定した結果です。
+
+同じオプションを持つ `Import-ProbedCsv` / `Export-ProbedCsv` は、使う前にファイル全体を検証して、判定を誤っていれば止まります。`Resolve-Encoding` は検証しません。詳しくは以下の記事で解説しています。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ### Get-EncodingProbePlatformInfo
 
 Get-EncodingProbePlatformInfo は、現在 SnowStack.EncodingProbe.PowerShell が認識しているプラットフォームの種類を報告するコマンドレットです。
 
-#### 三つのレコード
+#### 四つのレコード
 
-主な使用方法は、以下の三通りになります。
+主な使用方法は、以下の四通りになります。
 
 ```
 (Get-EncodingProbePlatformInfo).OS
@@ -229,13 +257,18 @@ Get-EncodingProbePlatformInfo は、現在 SnowStack.EncodingProbe.PowerShell �
 (Get-EncodingProbePlatformInfo).Runtime
 ```
 
-大きく三つのレコードでプラットフォームの情報を報告します。
+```
+(Get-EncodingProbePlatformInfo).Locale
+```
+
+大きく四つのレコードでプラットフォームの情報を報告します。
 
 | レコード名     | 内容                                                         |
 | -------------- | ------------------------------------------------------------ |
 | OS             | コマンドレットが起動しているOSの種類を報告します。           |
 | PowerShellHost | コマンドレットが起動しているPowerShellのバージョンを報告します。 |
 | Runtime        | コマンドレットが起動している.NET基盤のバージョンを報告します。 |
+| Locale         | カルチャーと、ANSI / OEM のコードページを報告します。 |
 
 それぞれのレコードの内容は以下のようになっています。
 
@@ -264,6 +297,39 @@ Get-EncodingProbePlatformInfo は、現在 SnowStack.EncodingProbe.PowerShell �
 | FrameworkDescription                  | 起動している .NET のバージョン情報を文字列で表記します。     |
 | IsDotNetFramework                     | 旧 .NET Framework の場合に True となります。                 |
 | IsCodePagesEncodingProviderRegistered | 起動しているPowerShellに CodePagesEncodingProvider が登録済みであれば True となります。これは Shift_JIS のエンコーディング名を使用するとき必須となる機能です。<br />(.NET Frameworkの場合は無条件にTrueになります) |
+
+#### Locale のプロパティ
+
+| プロパティ名   | 内容                                                         |
+| -------------- | ------------------------------------------------------------ |
+| CurrentCulture | 現在のカルチャー（スレッドのカルチャー）の名前。`-Culture` を省略したときの判定に使われます |
+| AnsiCodePage   | ANSI コードページ。`-Encoding ansi` が指すコードページです |
+| OemCodePage    | OEM コードページ。`-Encoding oem` が指すコードページです |
+| IsAnsiOemSame  | AnsiCodePage と OemCodePage が同じなら True になります |
+
+日本語の Windows では、以下のようになります。
+
+```
+PS C:\_test> (Get-EncodingProbePlatformInfo).Locale
+
+CurrentCulture : ja-JP
+AnsiCodePage   : 932
+OemCodePage    : 932
+IsAnsiOemSame  : True
+```
+
+AnsiCodePage と OemCodePage の値の出どころは、OS によって違います。
+
+| OS | AnsiCodePage / OemCodePage の値 |
+| :---- | :---- |
+| Windows | **システムのロケール**（「Unicode 対応ではないプログラムの言語」）の値（1.3.0 から） |
+| Linux / macOS | 現在のカルチャー（環境変数 `LC_ALL`・`LANG` などから決まる）の値 |
+
+1.2.0 までは、Windows でも現在のカルチャー（「地域」の設定の「形式」）の値でした。そのため、日本語の Windows で形式を「英語（米国）」にしていると、AnsiCodePage が 1252、OemCodePage が 437 になっていました。1.3.0 では、システムのロケールが日本語なら、形式にかかわらず 932 です。CurrentCulture は、今までどおり形式に従います。
+
+なお、PowerShell 7.x の標準のコマンドの `-Encoding ansi` は、プロセスの開始時の「形式」の ANSI コードページです。「形式」をシステムのロケールと違う値にしている環境では、本モジュールの `ansi` と違う値になります。
+
+Linux / macOS で実測した値は、GitHub の README の「[Linux / macOS での ansi / oem](https://github.com/motoi-tsushima/SnowStack.EncodingProbe/blob/v1.3.0/README.md#linux--macos-での-ansi--oem)」にあります。
 
 #### 利用場面
 
@@ -411,6 +477,8 @@ SnowStack.EncodingProbe NuGet パッケージについては、以下のペー�
 
 1.2.0 では、NuGet パッケージ側の判定処理を改修しました（東アジア以外の言語と、香港の Big5 への対応）。コマンドレットの判定の改善は、この改修によるものです。
 
+1.3.0 でも、NuGet パッケージ側の判定処理の不具合（BOM 無しの UTF-16 / UTF-32 の判定など）を直しました。CSV の読み書きの処理は、コマンドレット側で実装しています（PowerShell のコードの一部を改変して含めています。下の「ライセンス」）。
+
 ## ライセンス
 
 ライセンスは **MITライセンス** です。
@@ -419,31 +487,41 @@ SnowStack.EncodingProbe NuGet パッケージについては、以下のペー�
 
 ```
 SnowStack.EncodingProbe.PowerShell is licensed under MIT License.
-Copyright c 2026 motoi.tsushima
+Copyright (c) 2026 Motoi Tsushima
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_powershell_guide/
 
 This software includes the following third-party components:
 
 SnowStack.EncodingProbe
-Copyright c 2026 motoi.tsushima
+Copyright (c) 2026 Motoi Tsushima
 Licensed under MIT License
 https://github.com/motoi-tsushima/SnowStack.EncodingProbe
 https://snow-stack.net/encodingprobe_guide/
 
+PowerShell (portions of the CSV import/export implementation)
+Copyright (c) Microsoft Corporation.
+Licensed under MIT License
+https://github.com/PowerShell/PowerShell
+
 UTF.Unknown 2.7.0 (net10.0 build) / 2.6.0 (net48 build)
-Copyright (c) 2018 Nikolay Pultsin
 Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
 (This software uses UTF.Unknown under the terms of MPL 1.1)
 https://github.com/CharsetDetector/UTF-unknown
 https://www.mozilla.org/MPL/1.1/
 ```
 
+1.3.0 で、CSV の読み書きの処理（`Import-ProbedCsv` / `Export-ProbedCsv`）に、PowerShell（Copyright (c) Microsoft Corporation、MIT License）のコードの一部を改変して含めました。このコードはコマンドレットにだけ含まれ、NuGet パッケージには含まれません。あわせて、著作権の表記を `Copyright (c) 2026 Motoi Tsushima` にそろえています。
+
+UTF.Unknown は MIT ではなく、MPL 1.1 / GPL 2.0 以降 / LGPL 2.1 以降のトリプルライセンスです。SnowStack.EncodingProbe は MPL 1.1 を選択しています。
+
+ライセンスの全文は、モジュールに同梱している `LICENSE.txt` と `THIRD-PARTY-NOTICES.txt` にあります。
+
 UTF.Unknown のバージョンが .NET 10 用と .NET Framework 4.8 用で分かれているのは、意図的なものです。理由は以下の記事の「なぜこの作りにしたのか」で解説しています。
 
 [SnowStack.EncodingProbe.PowerShell 1.1.0 新コマンド解説](/encodingprobe_probed_content/)
 
-同じ文面は、コマンドからも取得できます。
+ライセンスの文面は、コマンドからも取得できます。
 
 ```
 # ライセンス情報を表示する
@@ -451,6 +529,22 @@ Resolve-Encoding -License
 ```
 
 ## お知らせ関連
+
+### （リリース日）　Version 1.3.0 リリース
+
+Version 1.3.0 をリリースしました。
+
+Import-ProbedCsv / Export-ProbedCsv の二つのコマンドレットを追加しています。
+
+Import-ProbedCsv は、文字エンコーディングを判定して CSV ファイルを読み込むコマンドです。Export-ProbedCsv は、文字エンコーディング・BOM・改行を指定して CSV ファイルに書き出すコマンドです。どちらも、Windows PowerShell 5.1 と PowerShell 7.x で同じ結果になります。
+
+Resolve-Encoding / Import-ProbedCsv / Export-ProbedCsv に、先頭の N 行だけで判定する -DetectionLineCount を追加しました。
+
+書き込みのコマンドは、書き込み先の文字エンコーディングで表現できない文字を `?` にして書くのをやめ、エラーにしてファイルを元のままにします。読み込んでいるファイルへの上書きも、ハードリンクなどで書き方を変えても検出し、中身を失わなくなりました。
+
+このほか、1.2.0 までと結果が変わる変更があります。更新の前に、以下の記事の「1.2.0 からの挙動の変更」と「更新するときの注意」をご覧ください。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 ### 2026年9月30日　Version 1.2.0 リリース
 
