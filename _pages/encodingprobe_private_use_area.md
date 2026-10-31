@@ -325,7 +325,24 @@ Show-Bytes .\back_sjis.txt
 
 私用領域の文字を、別のコードページで書き込んだ場合も、.NET の動作に従います。
 
-私用領域を持たないコードページ（US-ASCII など）へは、書き込めません。PowerShell モジュールの書き込みのコマンドは、1.3.0 からエラー（`UnrepresentableCharacter`）にします（1.2.0 までは `?` にして書いていました。.NET の `System.Text.Encoding` を既定の設定で直接使う場合は、今も `?` になります）。
+私用領域を持たないコードページ（US-ASCII など）では、私用領域の文字を表現できません。PowerShell モジュールの書き込みのコマンドでの扱いは、文字エンコーディングをどう決めたかで違います。
+
+- **`-Encoding ascii` を明示した場合は、書き込めません。** 1.3.0 からはエラー（`UnrepresentableCharacter`）にして、ファイルを元のままにします（1.2.0 までは `?` にして書いていました）
+- **`-Encoding` を省略して、英数字だけのファイル（`us-ascii` と判定されるファイル）に書く場合は、エラーになりません。** 1.3.0 では、判定や継承で得た `us-ascii` を BOM 無しの UTF-8 とみなすので、私用領域の文字は UTF-8 で書かれます
+
+```
+Set-Content .\a.txt -Value 'abc' -Encoding ascii
+Add-ProbedContent .\a.txt -Value ([string][char]0xE000)
+Show-Bytes .\a.txt
+```
+
+```
+61 62 63 0D 0A EE 80 80 0D 0A
+```
+
+U+E000 が、UTF-8 の `EE 80 80` で書かれています。このファイルを US-ASCII や Shift_JIS として読む別のプログラムがある場合は、`-Encoding` で明示してください。
+
+.NET の `System.Text.Encoding` を既定の設定で直接使って US-ASCII で書く場合は、今も `?` になります。
 
 注意が必要なのは、**私用領域を持つ別の国のコードページ**へ書き込む場合です。
 

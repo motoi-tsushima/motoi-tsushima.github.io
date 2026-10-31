@@ -926,6 +926,7 @@ Licensed under MIT License
 https://github.com/PowerShell/PowerShell
 
 UTF.Unknown 2.7.0 (net10.0 build) / 2.6.0 (net48 build)
+Copyright (c) 2018 Nikolay Pultsin
 Licensed under MPL 1.1 / GPL 2.0 or later / LGPL 2.1 or later
 (This software uses UTF.Unknown under the terms of MPL 1.1)
 https://github.com/CharsetDetector/UTF-unknown
