@@ -5,7 +5,7 @@ classes: wide
 permalink: /encodingprobe_culture_strategy/
 author_profile: true
 ---
-2026/09/30 document update
+2026/10/31 document update
 
 SnowStack.EncodingProbe.PowerShell の `-Culture` と `-Strategy` という、二つのオプションの解説です。
 
@@ -19,9 +19,13 @@ SnowStack.EncodingProbe.PowerShell の `-Culture` と `-Strategy` という、�
 
 そういう方には、意味があると思います。
 
-`-Culture` と `-Strategy` は、1.0.x から `Resolve-Encoding` に用意されていました。バージョン 1.1.0 で、`Get-ProbedContent` / `Set-ProbedContent` / `Add-ProbedContent` の 3 コマンドにも追加し、1.2.0 で追加した `Out-ProbedFile` / `Convert-ProbedContent` にも用意しています。
+`-Culture` と `-Strategy` は、1.0.x から `Resolve-Encoding` に用意されていました。バージョン 1.1.0 で、`Get-ProbedContent` / `Set-ProbedContent` / `Add-ProbedContent` の 3 コマンドにも追加し、1.2.0 で追加した `Out-ProbedFile` / `Convert-ProbedContent`、1.3.0 で追加した `Import-ProbedCsv` / `Export-ProbedCsv` にも用意しています。
 
 **1.2.0 で、判定処理を改善しました。** 1.1.0 では、日本語環境でドイツ語などのファイルを読むと誤判定するため、`-Strategy UtfUnknownOnly` の指定をお勧めしていました。1.2.0 では、既定のままで正しく判定します。この記事も、1.2.0 に合わせて書き直しています。
+
+**1.3.0 では、`-Culture` に受け付けるカルチャー名の決め方と、書き込みで表現できない文字の扱いが変わりました。** 該当する節に、1.3.0 の結果を書いています。1.3.0 の変更の全体は、以下の記事で解説しています。
+
+[SnowStack.EncodingProbe 1.3.0 解説 — CSV の読み書きと、文字を失わない書き込み](/encodingprobe_1_3_0/)
 
 コマンドそのものの解説は、以下の記事で行っています。
 
@@ -31,7 +35,7 @@ SnowStack.EncodingProbe.PowerShell の `-Culture` と `-Strategy` という、�
 
 [SnowStack.EncodingProbe.PowerShell 解説](/encodingprobe_powershell_guide/)
 
-（この記事に掲載した実行結果は、すべて実機で採取したものです。環境は Windows 11 の日本語環境で、PowerShell 7.x と Windows PowerShell 5.1.26100 の両方で採取しており、特に断らない限り両ホストで同じ結果になります。1.1.0 の結果は 2026年8月31日に PowerShell 7.6.5 で、1.2.0 の結果は 2026年9月28日に PowerShell 7.6.6 で採取しました）
+（この記事に掲載した実行結果は、すべて実機で採取したものです。環境は Windows 11 の日本語環境で、PowerShell 7.x と Windows PowerShell 5.1.26100 の両方で採取しており、特に断らない限り両ホストで同じ結果になります。1.1.0 の結果は 2026年8月31日に PowerShell 7.6.5 で、1.2.0 の結果は 2026年9月28日に PowerShell 7.6.6 で、1.3.0 の結果は 2026年10月31日に PowerShell 7.6.9 で採取しました）
 
 ## 文字エンコーディングの判定は、バイト列だけでは決まらない
 
@@ -102,7 +106,7 @@ Get-ProbedContent .\korean.txt -Culture ko-KR
 
 **同じファイル、同じコマンド、違うカルチャー。それだけで結果が変わります。**
 
-この結果は、1.2.0 でも変わりません。
+この結果は、1.2.0・1.3.0 でも変わりません。
 
 これは判定の不具合ではありません。バイト列としては、どちらも正しいのです。
 
@@ -143,6 +147,8 @@ Get-ProbedContent .\korean.txt -Culture ko-KR |
 **根拠としては弱いのですが、他に手がかりがありません。** 実用上は、これで大半が当たります。
 
 下の 2 行は、より単純です。EUC-KR と CP949、EUC-TW と CP950 は、それぞれ後者が前者を包含する関係にあるので、後者を選んでおけば実害が出ません。
+
+1.3.0 からは、この決め方に一つ条件を加えました。**表の決め方で選んだ候補では、そのバイト列を正しく読めず、もう一方では読める場合は、もう一方を選びます。** 1.2.0 までは、Shift_JIS に割り当ての無い 2 バイトを含む短い EUC-JP（約 40 バイト以下）を、改行が CRLF のときや改行が無いときに Shift_JIS と判定し、読み込みが `・` や私用領域の文字に黙って化けることがありました。
 
 ### 繁体字と簡体字の取り違え（1.2.0 で改善）
 
@@ -187,12 +193,14 @@ HKSCS 固有の文字は、Unicode の私用領域の文字として読み込ま
 | `Set-ProbedContent` / `Add-ProbedContent` | `-Encoding` 省略時（`Auto`）の、書き込み先・追記先の既存ファイル |
 | `Out-ProbedFile` | `-EncodingFrom` の参照ファイル、`-Encoding Auto` の出力先、`-Append` の追記先の既存ファイル |
 | `Convert-ProbedContent` | `-SourceEncoding` 省略時の変換元のファイル |
+| `Import-ProbedCsv`（1.3.0） | `-Encoding` 省略時に読み込むファイル |
+| `Export-ProbedCsv`（1.3.0） | `-EncodingFrom` の参照ファイル、`-Encoding Auto` の出力先、`-Append` の追記先の既存ファイル |
 
 つまり、読むときだけでなく、**書くときにも効きます。**
 
 `ConvertTo-DotNetEncoding` にだけは `-Culture` がありません。ファイルを引数に取らず、判定処理そのものを呼び出さないためです。
 
-### 書き込みでも指定を間違えると壊れます
+### 書き込みでも指定を間違えると、書き込めません
 
 書き込み側で `-Culture` を間違えると、どうなるか。
 
@@ -205,22 +213,25 @@ Set-ProbedContent .\from_ko.txt -Value '안녕하세요' `
 Show-Bytes .\from_ko.txt
 ```
 
-| `-Culture` の指定 | できたバイト列 |
-| :---- | :---- |
-| `-Culture ko-KR` | `BE C8 B3 E7 C7 CF BC BC BF E4 0A`（CP949） |
-| `-Culture ja-JP` | `3F 3F 3F 3F 3F 0A`（`?????`） |
+| `-Culture` の指定 | 1.3.0 の結果 | 1.2.0 までの結果 |
+| :---- | :---- | :---- |
+| `-Culture ko-KR` | `BE C8 B3 E7 C7 CF BC BC BF E4 0A`（CP949） | 同じ |
+| `-Culture ja-JP` | **エラー（`UnrepresentableCharacter`）。ファイルは作られない** | `3F 3F 3F 3F 3F 0A`（`?????`） |
 
 `ja-JP` を指定すると、参照ファイルが EUC-JP と判定されます。
 
-そして、韓国語の文字は EUC-JP では符号化できません。すべて `3F`、つまり半角の `?` に置き換わります。
+そして、韓国語の文字は EUC-JP では符号化できません。1.3.0 では、次のエラーになり、ファイルを書きません。
 
-**元の文字は、この時点で完全に失われます。** `?` から韓国語を復元する方法はありません。
+```
+文字 U+C548 '안' は文字エンコーディング 'euc-jp' で表現できないため、
+'...\from_ja.txt' に書き込みませんでした。ファイルは変更していません。
+```
 
-`-EncodingFrom` を使う場面では、参照ファイルの判定が正しいかどうかを、先に `Resolve-Encoding` で確認しておくことをお勧めします。
+1.2.0 までは、エラーにせず、すべて `3F`、つまり半角の `?` にして書いていました。**元の文字は、その時点で完全に失われていました。** `?` から韓国語を復元する方法はありません。
 
-この結果は、1.2.0 でも同じです。`Set-ProbedContent` の書き込みは、.NET の既定の動作に従い、符号化できない文字を `?` に置き換えます。
+1.3.0 では、`Set-ProbedContent`・`Add-ProbedContent`・`Out-ProbedFile`・`Export-ProbedCsv` が、表現できない文字をエラーにして、ファイルを元のままにします（1.2.0 で追加した `Convert-ProbedContent` は、もともとそうでした）。
 
-なお、1.2.0 で追加した `Convert-ProbedContent` は、このように文字が失われる変換を行いません。変換先で表現できない文字があれば、そのファイルは変換せずにエラーを報告します。
+それでも、`-EncodingFrom` を使う場面では、参照ファイルの判定が正しいかどうかを、先に `Resolve-Encoding` で確認しておくことをお勧めします。判定が誤っていても、書く文字がその文字エンコーディングで表現できてしまえば、エラーにならずに違う文字エンコーディングで書かれるからです。
 
 （`Show-Bytes` は、ファイルの中身を 16 進数で表示する自作のヘルパー関数です。定義は [新コマンド解説の記事](/encodingprobe_probed_content/) に載せています）
 
@@ -338,7 +349,7 @@ Get-ProbedContent .\german.txt -Strategy UtfUnknownOnly
 
 **新しく書くスクリプトでは、正式名の使用をお勧めします。** 意味が名前から読み取れるからです。
 
-`-Strategy` も `-Culture` と同様に、`Resolve-Encoding` と Probed 系の 3 コマンドで同じ値を取ります。
+`-Strategy` も `-Culture` と同様に、`Resolve-Encoding` と Probed 系のすべてのコマンドで同じ値を取ります。
 
 ### 補足 — トルコ語環境での落とし穴
 
@@ -408,6 +419,19 @@ False
 
 そのため、モジュール自身のメッセージだけを表示するようにしました。
 
+### 受け付けるカルチャー名（1.3.0 で変更）
+
+1.2.0 までは、カルチャー名を受け付けるかどうかを、.NET でそのカルチャーを作れるかどうかで決めていました。そのため、Windows PowerShell 5.1（.NET Framework）と PowerShell 7.x（.NET）で、受け付ける名前が違っていました。たとえば `-Culture C` は、5.1 ではエラー、7.x では判定に進んでいました。
+
+1.3.0 では、**名前の形（BCP 47）**で決めるので、両ホストで同じになります。
+
+- `C`・`root`・`POSIX` などは、両ホストで `InvalidCulture` になります
+- `art-lojban`・`zh-yue`・`und-u-ca-gregory` など、片方のホストだけが受け付けていた名前は、両ホストで受け付けます
+- 言語の直後の拡張言語は、それを言語として扱います。`zh-yue` は広東語（`yue`）として、香港と同じ扱いで判定します
+- 名前の前後の空白は除きます（`' ko-KR'` は `'ko-KR'` と同じ）。名前の途中の空白は、今までどおりエラーです
+
+また、`Resolve-Encoding` に解釈できない `-Strategy` / `-Culture` を渡したときのエラーも、ほかのコマンドと同じ `InvalidStrategy` / `InvalidCulture` になりました。1.2.0 までの `Resolve-Encoding` は、.NET の英語のメッセージ（ID の無い `ArgumentException`）でした。
+
 ## 判定にはまだ限界があります
 
 正直に書いておきます。
@@ -420,7 +444,7 @@ ISO-2022 系の判定には、まだ問題が残っています。
 | SO/SI 形式の 1 バイトカナを検出できない | 未対応 |
 | 判定できても .NET が扱えないコードページがある | 1.1.0 で非終了エラー（`CodePageNotAvailable`）として報告する対応を実施 |
 
-上の 2 件は判定エンジン側の課題で、1.2.0 でも未対応です。
+上の 2 件は判定エンジン側の課題で、1.3.0 でも未対応です。
 
 3 件目については、判定は成功しているのに、実行環境の .NET がそのコードページを提供していない、という状態です。ISO-2022-TW（50229）が該当します。
 
@@ -431,7 +455,7 @@ ISO-2022 系の判定には、まだ問題が残っています。
 | 現象 | 状態 |
 | :---- | :---- |
 | おおむね 90 バイト以下の短いシングルバイト系のテキストを、東アジアのカルチャーで誤判定する | UTF.Unknown の精度の限界のため未対応 |
-| 文字の一覧や記号・数字の多いシングルバイト系のテキストは、数百バイトあっても判定できない（`CodePage` が `-1`）ことがある | 統計による推定の限界のため未対応。カルチャーからの推定を 1.3.0 以降で検討中 |
+| 文字の一覧や記号・数字の多いシングルバイト系のテキストは、数百バイトあっても判定できない（`CodePage` が `-1`）ことがある | 統計による推定の限界のため未対応（1.3.0 でも同じ）。`-Encoding` で明示してください |
 | ウクライナ語（windows-1251 / KOI8-U）が判定できない | UTF.Unknown の信頼度が低いため未対応 |
 | ルーマニア語（ISO-8859-16）が判定できない | .NET がこの文字エンコーディングを提供していないため。判定失敗のエラーとして報告する |
 | 大陸のカルチャーで、HKSCS 入りの Big5 を GB18030 と判定する | 未対応。`-Culture zh-HK` を指定してください |
