@@ -10,6 +10,9 @@ tags:
   - Windows ツール
 ---
 
+2026年11月3日に記事を更新し、「SnowStack.EncodingProbe.PowerShell を使用した対策」の章を追加しました。
+{: .notice--info}
+
 PowerShell 上での文字エンコーディングの変換方法を解説します。  
 これから文字エンコーディング、BOM、改行コードの3点について解説します。
 
@@ -385,6 +388,226 @@ mfsr *.txt /nl:win
 「UNIX型改行コード」は、`/nl:lf` 以外にも `/nl:unix` や `/nl:u` も使用できます。
 
 ちなみに `/nl` は `New Line` の略です。
+
+## SnowStack.EncodingProbe.PowerShell を使用した対策
+
+（2026年11月3日に追記）
+{: .notice--info}
+
+mfsr と mfprobe は独立したコマンドですが、PowerShell の中で使うためのモジュールとして、SnowStack.EncodingProbe.PowerShell も提供しています。
+
+そのマニュアルは以下になります。
+
+[SnowStack.EncodingProbe.PowerShell 解説](https://snow-stack.net/encodingprobe_powershell_guide/)
+
+ここで、SnowStack.EncodingProbe.PowerShell を使用した、文字エンコーディング・BOM・改行コードの確認と変換の方法を、解説したいと思います。  
+SnowStack.EncodingProbe.PowerShell は、PowerShell のコマンドレットとして動作するので、結果をオブジェクトパイプラインで他のコマンドレットに渡したり、変数に代入したりできます。PowerShell スクリプトの中で使用するのに向いています。  
+その代わり、mfsr と mfprobe と違い、cmd や Git Bash などでは使用できません。
+
+Windows PowerShell 5.1 でも PowerShell 7.x でも、同じように使用でき、同じ結果になります。（2026年11月時点の最新版は Version 1.3.0 です）
+
+### インストール
+
+SnowStack.EncodingProbe.PowerShell は PowerShell ギャラリーで配布しているので、PowerShell 7.x では以下のコマンドでインストールできます。
+
+```
+Install-PSResource SnowStack.EncodingProbe.PowerShell
+```
+
+Windows PowerShell 5.1 には `Install-PSResource` コマンドが用意されていないので、前作業が必要になります。その手順は、以下の記事で解説しています。
+
+[SnowStack.EncodingProbe.PowerShell を Windows PowerShell 5.1 へインストールする方法](https://snow-stack.net/encodingprobe_powershell_install_ps51/)
+
+### Resolve-Encoding による確認（文字エンコーディングとBOMと改行コード）
+
+Resolve-Encoding は対象テキストファイルの文字エンコーディングとBOMの有無と改行コードの種類を推測して一度に表示します。  
+BOMに頼らずに推測するので、Shift\_JIS や BOM無しの UTF-8 も判別できます。
+
+```
+PS C:\_test> Resolve-Encoding text1.txt
+
+CodePage        : 932
+EncodingWebName : shift_jis
+PSEncodingName  : shift_jis
+UsePSName       : False
+Bom             : False
+LineBreak       : CrLf
+Culture         : ja-JP
+```
+
+`EncodingWebName` が文字エンコーディング、`Bom` がBOMの有無（True = BOM有り、False = BOM無し）、`LineBreak` が改行コードの種類（Windows形式 = CrLf 、UNIX形式 = Lf）です。
+
+結果はオブジェクトなので、必要なプロパティだけを取り出すこともできます。
+
+```
+# 改行コードだけを確認する
+(Resolve-Encoding text1.txt).LineBreak
+```
+
+Resolve-Encoding はスクリプトの中で使用することを優先して開発したので、ワイルドカードには対応していません。ファイルは一つずつ指定します。  
+複数ファイルを一括で確認したい場合は、Get-ChildItem と組み合わせて以下の様に使用します。
+
+```
+# 複数ファイルの一括確認
+Get-ChildItem *.txt | ForEach-Object {
+    $r = Resolve-Encoding $_.FullName
+    [pscustomobject]@{ Name = $_.Name; EncodingWebName = $r.EncodingWebName; Bom = $r.Bom; LineBreak = $r.LineBreak }
+}
+
+# 実行結果
+Name      EncodingWebName   Bom LineBreak
+----      ---------------   --- ---------
+text1.txt shift_jis       False      CrLf
+text2.txt utf-8            True        Lf
+```
+
+サブディレクトリ配下のファイルも確認するときは、`Get-ChildItem -Recurse *.txt` とします。
+
+### Convert-ProbedContent による文字エンコーディングの変換
+
+文字エンコーディングを変換するときは、`Resolve-Encoding` ではなく `Convert-ProbedContent` を使用します。  
+mfprobe と mfsr と同じく、確認するコマンドと更新するコマンドを分けています。  
+変換先の文字エンコーディングは `-Encoding` オプションで指定します。  
+変換元の文字エンコーディングは自動で推測するので、指定する必要はありません。  
+変換結果は、対象テキストファイルに上書きします。
+
+```
+# 通常の使い方（BOM無しの UTF-8 に変換する）
+Convert-ProbedContent text1.txt -Encoding utf8NoBOM
+
+# BOM有りの UTF-8 に変換する
+Convert-ProbedContent text1.txt -Encoding utf8BOM
+
+# Shift_JIS に変換する
+Convert-ProbedContent text1.txt -Encoding shift_jis
+
+# 読み取り文字エンコーディングの指定もする場合
+Convert-ProbedContent text1.txt -SourceEncoding shift_jis -Encoding utf8NoBOM
+
+# 複数ファイルを一括変換
+Convert-ProbedContent *.txt -Encoding utf8NoBOM
+
+# サブディレクトリ配下のファイルも一括変換
+Get-ChildItem -Recurse *.txt | Convert-ProbedContent -Encoding utf8NoBOM
+```
+
+UTF-8 は、BOM無しを `utf8NoBOM`、BOM有りを `utf8BOM` と指定します。  
+単に `utf8` と指定すると、エラーになります。Windows PowerShell 5.1 と PowerShell 7.x とでは、`utf8` のBOMの有無の解釈が逆になるため、曖昧さを避けるために受け付けないようにしています。
+
+`-PassThru` オプションを付けると、変換結果を表示します。
+
+```
+PS C:\_test> Convert-ProbedContent text1.txt -Encoding utf8NoBOM -PassThru
+
+Path            : C:\_test\text1.txt
+Destination     : C:\_test\text1.txt
+SourceEncoding  : shift_jis
+SourceCodePage  : 932
+Encoding        : utf8NoBOM
+SourceLineBreak : CrLf
+LineBreak       : CrLf
+Changed         : True
+```
+
+元のファイルを残したいときは、`-Destination` オプションで出力先のフォルダーを指定します。（フォルダーはあらかじめ作成しておいてください）
+
+```
+# 変換結果を out フォルダーに出力する
+Convert-ProbedContent *.txt -Encoding utf8NoBOM -Destination .\out
+```
+
+Convert-ProbedContent は、文字が失われる変換を行いません。  
+たとえば、韓国語の混ざった UTF-8 のテキストファイルを Shift\_JIS に変換しようとすると、Shift\_JIS にはハングルが無いので、そのファイルを変換せずにエラーで止まります。黙って `?` に置き換えることはありません。
+
+### BOMの変換方法
+
+BOMについても、確認は `Resolve-Encoding` を、変換更新は `Convert-ProbedContent` を使用します。
+
+#### BOMの確認
+
+Resolve-Encoding は、文字エンコーディング名と改行コードの種類とBOMの有無を一度に表示するので、それらの確認は全て以下の様に使用して確認します。
+
+```
+Resolve-Encoding text1.txt
+
+# BOMの有無だけを確認する
+(Resolve-Encoding text1.txt).Bom
+```
+
+#### BOMの追加
+
+BOMの更新には、`-Bom` オプションを使用します。  
+`-Bom Add` で「BOMを追加する」、`-Bom Remove` で「BOMを削除する」と動作更新します。  
+`-Encoding` オプションを指定しなければ、文字エンコーディングは元のままで、BOMだけを変更します。元の文字エンコーディングが何かを、知っている必要はありません。
+
+```
+# text1.txt にBOMを追加する
+Convert-ProbedContent text1.txt -Bom Add
+
+# 複数ファイルに対して一括でBOMを追加する
+Convert-ProbedContent *.txt -Bom Add
+```
+
+#### BOMの削除
+
+BOMの削除も「BOMの追加」の説明の通りに使用します。
+
+```
+# text1.txt のBOMを削除する
+Convert-ProbedContent text1.txt -Bom Remove
+
+# 複数ファイル一括でBOMを削除する
+Convert-ProbedContent *.txt -Bom Remove
+```
+
+BOMの操作は、Unicode に対してのみ有効な操作です。  
+Shift\_JIS などBOMが存在しない文字エンコーディングのファイルに対しては、`-Bom Remove` は何もせず、`-Bom Add` はエラーになって、そのファイルは変換しません。
+
+### 改行コードの変換方法
+
+改行コードについても、確認は `Resolve-Encoding` を、変換更新は `Convert-ProbedContent` を使用します。
+
+#### 改行コードの確認
+
+Resolve-Encoding は、文字エンコーディング名と改行コードの種類とBOMの有無を一度に表示するので、それらの確認は全て以下の様に使用して確認します。
+
+```
+# 改行コードなど確認する
+Resolve-Encoding text1.txt
+
+# 改行コードだけを確認する
+(Resolve-Encoding text1.txt).LineBreak
+```
+
+CR-LF と LF が混在しているファイルは、`LfAndCrLf` のように表示します。
+
+#### 改行コードの変換
+
+改行コードの変換更新には、`-LineBreak` オプションを使用します。  
+`-LineBreak CrLf` で「Windows型改行コード」、`-LineBreak Lf` で「UNIX型改行コード」に変換し更新します。  
+ファイルの中の全ての改行コードを揃えるので、改行コードが混在したファイルも変換できます。  
+`-LineBreak` オプションが無ければ、改行コードを変更しません。
+
+```
+# UNIX改行形式に変換する
+Convert-ProbedContent text1.txt -LineBreak Lf
+
+# Windows改行形式に変換する(複数一括変換)
+Convert-ProbedContent *.txt -LineBreak CrLf
+```
+
+文字エンコーディング・BOM・改行コードの変換は、一度にまとめて指定することもできます。
+
+```
+# Shift_JIS などのファイルを、BOM無しの UTF-8・UNIX改行形式に一括変換する
+Convert-ProbedContent *.txt -Encoding utf8NoBOM -LineBreak Lf
+```
+
+変換した結果が元のファイルと全く同じ場合は、ファイルを書き直さないので、更新日時も変わりません。変換済みのファイルが混ざったフォルダーに何度実行しても、変換が必要なファイルだけが更新されます。
+
+Convert-ProbedContent の詳しい使い方は、以下の記事で解説しています。
+
+[SnowStack.EncodingProbe 1.2.0 解説 — ファイル出力・変換コマンドと世界の言語への対応](https://snow-stack.net/encodingprobe_1_2_0/)
 
 ## 文字エンコーディング問題は、まだまだ終わらない
 
